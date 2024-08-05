@@ -1,9 +1,10 @@
 import React from 'react'
-
-function Booking() {
+import {getUser} from '../../../actions/user'
+async function Booking() {
+  const user=await getUser();
   return (
     <div>
-Booking
+    {user}
     </div>
   )
 }
