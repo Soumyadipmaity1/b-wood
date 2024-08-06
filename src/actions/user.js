@@ -1,5 +1,4 @@
 "use server"
-// import connectDB from "@/db/database.js"
 import User from "../db/models/user.js"
 import connectDB from '../db/database.js'
 
