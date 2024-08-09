@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { FaFacebook, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
 
+const date = new Date();
+const year = date.getFullYear();
+
 const Footer = () => {
   return (
     <footer className="bg-[#1b1b1b] text-gray-300 pt-10 mt-10 border-t-2 border-[#a8ff35]">
@@ -29,16 +32,17 @@ const Footer = () => {
           <p className="mb-4">
             Stay updated with our latest releases and offers!
           </p>
-          <form className="flex">
+          <form className="flex items-center justify-center">
             <input
               type="email"
               placeholder="Enter your email"
               required
-              className="flex-grow px-4 py-2 bg-gray-800 text-gray-300 border-none focus:outline-none"
+              className="flex-grow px-2 py-2 rounded-sm bg-gray-800 text-gray-300 border-none focus:outline-none"
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-[#a8ff35] text-gray-900 hover:bg-green-600 transition-colors"
+              className="px-3 py-2 roun bg-[#a8ff35] text-gray-900 hover:bg-green-600 transition-colors"
+
             >
               Subscribe
             </button>
@@ -46,7 +50,7 @@ const Footer = () => {
         </FooterSection>
       </div>
       <div className="bg-gray-950 py-4 text-center text-sm">
-        &copy; 2023 B-Wood. All rights reserved.
+        &copy; {year} B-Wood. All rights reserved.
       </div>
     </footer>
   );

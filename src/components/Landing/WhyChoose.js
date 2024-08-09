@@ -32,9 +32,9 @@ const WhyChooseSection = () => {
         {reasons.map((reason, index) => (
           <div
             key={index}
-            className="relative border border-white overflow-hidden rounded-lg bg-black text-white shadow-lg transform transition-transform duration-300 hover:scale-105"
+            className="relative border border-white overflow-hidden rounded-lg bg-black text-white shadow-lg transform transition-transform duration-150 hover:scale-105"
           >
-            <div className="flex items-center justify-center h-24 w-full bg-gradient-to-br from-gradient-start to-gradient-end transition-all duration-300">
+            <div className="flex items-center justify-center h-24 w-full bg-gradient-to-br from-gradient-start to-gradient-end transition-all duration-150">
               <div className="text-center">{reason.icon}</div>
             </div>
             <div className="p-6">

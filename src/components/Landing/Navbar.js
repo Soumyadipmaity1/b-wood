@@ -22,21 +22,22 @@ const Navbar = () => {
 
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 ${navbarBg} backdrop-blur-none transition-all duration-300 z-50`}>
+    <nav className={`fixed top-0 w-screen ${navbarBg} backdrop-blur-none transition-all duration-300 z-50`}>
       <div className="flex justify-between items-center p-4 max-w-6xl mx-auto">
-<div>        <Link href="/" className="flex items-center text-lime-500 font-bold text-2xl">
-    
-          B-Wood
-        </Link></div>
-       <div className='flex gap-4'> 
-       <div className="flex-grow mx-4">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="sm:w-96 w-48 px-4 py-2 rounded bg-gray-800 text-white placeholder-gray-400"
-          />
+        <div>
+          <Link href="/" className="flex items-center text-lime-500 font-bold text-2xl">
+            B-Wood
+          </Link>
         </div>
-        <Link href="/account" className="flex items-center">
+        <div className='flex lg:gap-8'>
+          <div className="flex-grow mx-4">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="sm:w-96 w-48 px-4 py-2 rounded bg-gray-800 text-white placeholder-gray-400"
+            />
+          </div>
+          <Link href="/account" className="flex items-center">
             <svg
               width="24"
               height="24"
@@ -60,9 +61,9 @@ const Navbar = () => {
                 strokeLinejoin="round"
               />
             </svg>
-          
-        </Link>
-       </div>
+
+          </Link>
+        </div>
       </div>
     </nav>
   );
