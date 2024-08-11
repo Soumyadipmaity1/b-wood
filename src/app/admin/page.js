@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import AdminMovies from '../../components/adminComponents/Movies/AdminMovies';
 import AdminTheatres from '../../components/adminComponents/Theatres/AdminTheatres';
@@ -9,16 +9,16 @@ import MoviesSidebar from '../../components/adminComponents/Movies/MoviesSidebar
 
 function Admin() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarMode, setSidebarMode] = useState('add');
 
-  const handleOpenSidebar = () => {
+  const handleOpenSidebar = (mode) => {
+    setSidebarMode(mode);
     setSidebarOpen(true);
   };
 
   const handleCloseSidebar = () => {
     setSidebarOpen(false);
   };
-
-
 
   return (
     <main className='px-10 pt-20'>
@@ -27,13 +27,13 @@ function Admin() {
         <div className='flex justify-between'>
           <h1 className="text-3xl text-neon font-bold">Existing Movies</h1>
           <button 
-            onClick={handleOpenSidebar}  // Open the sidebar on button click
+            onClick={() => handleOpenSidebar('add')}
             className='flex items-center justify-around p-1 gap-2 pr-3 text-black font-bold bg-neon rounded-full cursor-pointer transition ease-in-out duration-150 hover:scale-105'>
             <FaPlusCircle className='size-8' />
             <p className='flex items-center justify-center'>Add Movies</p>
           </button>
         </div>
-        <AdminMovies />
+        <AdminMovies onOpenSidebar={() => handleOpenSidebar('edit')} />
       </div>
 
       <div className="p-6">
@@ -69,7 +69,7 @@ function Admin() {
         <AdminUsers />
       </div>
 
-      <MoviesSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
+      <MoviesSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} mode={sidebarMode} />
     </main>
   );
 }

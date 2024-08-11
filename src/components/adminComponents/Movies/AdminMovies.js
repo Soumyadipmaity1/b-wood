@@ -1,11 +1,11 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import MoviesSidebar from './MoviesSidebar';
 
 const Card = ({ title, imageSrc, onClick }) => {
     return (
-        <div 
+        <div
             className="relative border-2 ml-4 w-60 cursor-pointer text-center border-neon rounded-xl shadow-lg flex flex-col justify-center p-2 transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-opacity-80"
             onClick={onClick}
         >
@@ -24,11 +24,11 @@ const Card = ({ title, imageSrc, onClick }) => {
     );
 };
 
-const AdminMovies = () => {
+const AdminMovies = ({ onOpenSidebar }) => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     const handleCardClick = () => {
-        setSidebarOpen(true);
+        onOpenSidebar();
     };
 
     const handleSidebarClose = () => {

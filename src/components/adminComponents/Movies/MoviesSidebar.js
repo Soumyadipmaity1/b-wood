@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import TimeInput from './TimeInput';
 
-const MoviesSidebar = ({ isOpen, onClose }) => {
+const MoviesSidebar = ({ isOpen, onClose, mode }) => {
     const languageOptions = [
         { label: 'Choose the Language', value: 'NULL' },
         { label: 'Hindi', value: 'Hindi' },
@@ -56,7 +56,7 @@ const MoviesSidebar = ({ isOpen, onClose }) => {
                 onClick={onClose}
             />
             <form className='flex flex-col gap-8'>
-                <div className='flex flex-col gap-2'>
+            <div className='flex flex-col gap-2'>
                     <label className='text-neon font-semibold'>Title</label>
                     <input
                         type='text'
@@ -175,10 +175,16 @@ const MoviesSidebar = ({ isOpen, onClose }) => {
                     <TimeInput />
                 </div>
 
-                <div className='flex items-center justify-around gap-3 pt-10'>
-                    <button type='submit' className='bg-neon text-black py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>UPDATE</button>
-                    <button type='submit' className='bg-black border-2 border-neon text-neon py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>DELETE</button>
-                </div>
+                {mode === 'add' ? (
+                    <div className='flex items-center justify-around pt-10'>
+                        <button type='submit' className='bg-neon text-black py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>ADD MOVIE</button>
+                    </div>
+                ) : (
+                    <div className='flex items-center justify-around gap-3 pt-10'>
+                        <button type='submit' className='bg-neon text-black py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>UPDATE</button>
+                        <button type='submit' className='bg-black border-2 border-neon text-neon py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>DELETE</button>
+                    </div>
+                )}
             </form>
         </div>
     );
