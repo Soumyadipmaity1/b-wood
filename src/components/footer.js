@@ -6,7 +6,7 @@ const year = date.getFullYear();
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1b1b1b] text-gray-300 pt-10 mt-10 border-t-2 border-[#a8ff35]">
+    <footer className="bg-[#1b1b1b] text-gray-300 pt-10 mt-10 border-t-2 border-neon">
       <div className="max-w-6xl mx-auto flex flex-wrap pb-5 justify-between px-4">
         <FooterSection title="Explore">
           <FooterLink href="/">Movies</FooterLink>
@@ -41,7 +41,7 @@ const Footer = () => {
             />
             <button
               type="submit"
-              className="px-3 py-2 roun bg-[#a8ff35] text-gray-900 hover:bg-green-600 transition-colors"
+              className="px-3 py-2 roun bg-neon text-gray-900 hover:bg-green-600 transition-colors"
 
             >
               Subscribe
@@ -58,7 +58,7 @@ const Footer = () => {
 
 const FooterSection = ({ title, children }) => (
   <div className="w-full sm:w-auto flex-1 mb-6 sm:mb-0">
-    <h3 className="text-[#a8ff35] text-lg mb-4 uppercase">{title}</h3>
+    <h3 className="text-neon text-lg mb-4 uppercase">{title}</h3>
     {children}
   </div>
 );
@@ -66,7 +66,7 @@ const FooterSection = ({ title, children }) => (
 const FooterLink = ({ href, children }) => (
   <li className="mb-2">
     <Link legacyBehavior href={href}>
-      <a className="hover:text-[#a8ff35]">{children}</a>
+      <a className="hover:text-neon">{children}</a>
     </Link>
   </li>
 );
@@ -75,7 +75,7 @@ const SocialIcon = ({ href, icon, label }) => (
   <a
     href={href}
     aria-label={label}
-    className="text-gray-400 hover:text-[#a8ff35] text-2xl"
+    className="text-gray-400 hover:text-neon text-2xl"
   >
     {icon}
   </a>

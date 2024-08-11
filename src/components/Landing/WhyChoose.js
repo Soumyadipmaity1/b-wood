@@ -27,7 +27,7 @@ const reasons = [
 const WhyChooseSection = () => {
   return (
     <section className="bg-gradient-to-r from-gradient-start to-gradient-end p-8 py-16">
-      {/* <h2 className="text-4xl font-bold text-[#a8ff35] mb-20 text-center">Why  Us?</h2> */}
+      {/* <h2 className="text-4xl font-bold text-neon mb-20 text-center">Why  Us?</h2> */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2  xl:grid-cols-4 gap-6">
         {reasons.map((reason, index) => (
           <div
@@ -38,7 +38,7 @@ const WhyChooseSection = () => {
               <div className="text-center">{reason.icon}</div>
             </div>
             <div className="p-6">
-              <h3 className="text-2xl text-center text-[#a8ff35] font-semibold mb-3">{reason.title}</h3>
+              <h3 className="text-2xl text-center text-neon font-semibold mb-3">{reason.title}</h3>
               <p className="text-sm text-center">{reason.description}</p>
             </div>
             <div className="absolute inset-0 gradient-overlay"></div>

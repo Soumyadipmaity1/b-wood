@@ -6,7 +6,7 @@ import Link from "next/link";
 const Card = ({ title, imageSrc }) => {
   return (
     <Link legacyBehavior className="" href="/movies">
-      <div className="relative border-2 ml-4  w-60 cursor-pointer text-center border-[#a8ff35] rounded-xl shadow-lg flex flex-col justify-center p-2 transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-opacity-80">
+      <div className="relative border-2 ml-4  w-60 cursor-pointer text-center border-neon rounded-xl shadow-lg flex flex-col justify-center p-2 transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-opacity-80">
         <div className="relative h-80 w-full rounded-md mb-4 overflow-hidden">
           <Image
             src={imageSrc}
