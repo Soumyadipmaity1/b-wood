@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import AdminMovies from '../../components/adminComponents/Movies/AdminMovies';
 import AdminTheatres from '../../components/adminComponents/Theatres/AdminTheatres';
-import AdminShowtimes from '../../components/adminComponents/Showtimes/AdminShowtimes';
 import AdminReservations from '../../components/adminComponents/Reservations/AdminReservations';
 import AdminUsers from '../../components/adminComponents/Users/AdminUsers';
 import { FaPlusCircle } from 'react-icons/fa';
@@ -20,7 +19,7 @@ function Admin() {
   };
 
 
-  
+
   return (
     <main className='px-10 pt-20'>
 
