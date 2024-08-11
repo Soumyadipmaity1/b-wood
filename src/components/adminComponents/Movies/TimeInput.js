@@ -49,7 +49,7 @@ const TimeInput = () => {
         maxLength="2"
         className="w-16 p-1 pl-2 border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-neon"
       />
-      
+
     </div>
   );
 };
