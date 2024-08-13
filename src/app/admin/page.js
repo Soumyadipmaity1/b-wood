@@ -6,18 +6,31 @@ import AdminReservations from '../../components/adminComponents/Reservations/Adm
 import AdminUsers from '../../components/adminComponents/Users/AdminUsers';
 import { FaPlusCircle } from 'react-icons/fa';
 import MoviesSidebar from '../../components/adminComponents/Movies/MoviesSidebar';
+import UsersSidebar from '../../components/adminComponents/Users/UsersSidebar';
 
 function Admin() {
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [isMoviesSidebarOpen, setMoviesSidebarOpen] = useState(false);
+  const [isUsersSidebarOpen, setUsersSidebarOpen] = useState(false);
   const [sidebarMode, setSidebarMode] = useState('add');
 
-  const handleOpenSidebar = (mode) => {
+  const handleOpenMoviesSidebar = (mode) => {
+    setUsersSidebarOpen(false);
     setSidebarMode(mode);
-    setSidebarOpen(true);
+    setMoviesSidebarOpen(true);
   };
 
-  const handleCloseSidebar = () => {
-    setSidebarOpen(false);
+  const handleOpenUsersSidebar = (mode) => {
+    setMoviesSidebarOpen(false);
+    setSidebarMode(mode);
+    setUsersSidebarOpen(true);
+  };
+
+  const handleCloseMoviesSidebar = () => {
+    setMoviesSidebarOpen(false);
+  };
+
+  const handleCloseUsersSidebar = () => {
+    setUsersSidebarOpen(false);
   };
 
   return (
@@ -26,14 +39,15 @@ function Admin() {
       <div className="p-6">
         <div className='flex justify-between'>
           <h1 className="text-3xl text-neon font-bold">Existing Movies</h1>
-          <button 
-            onClick={() => handleOpenSidebar('add')}
+          <button
+            onClick={() => handleOpenMoviesSidebar('add')}
             className='flex items-center justify-around p-1 gap-2 pr-3 text-black font-bold bg-neon rounded-full cursor-pointer transition ease-in-out duration-150 hover:scale-105'>
             <FaPlusCircle className='size-8' />
             <p className='flex items-center justify-center'>Add Movies</p>
           </button>
         </div>
-        <AdminMovies onOpenSidebar={() => handleOpenSidebar('edit')} />
+        <AdminMovies onOpenSidebar={() => handleOpenMoviesSidebar('edit')} />
+        <MoviesSidebar isOpen={isMoviesSidebarOpen} onClose={handleCloseMoviesSidebar} mode={sidebarMode} />
       </div>
 
       <div className="p-6">
@@ -61,15 +75,17 @@ function Admin() {
       <div className="p-6">
         <div className='flex justify-between'>
           <h1 className="text-3xl text-neon font-bold">Existing Users</h1>
-          <button className='flex items-center justify-around p-1 gap-2 pr-3 text-black font-bold bg-neon rounded-full cursor-pointer transition ease-in-out duration-150 hover:scale-105'>
+          <button
+            onClick={() => handleOpenUsersSidebar('add')}
+            className='flex items-center justify-around p-1 gap-2 pr-3 text-black font-bold bg-neon rounded-full cursor-pointer transition ease-in-out duration-150 hover:scale-105'>
             <FaPlusCircle className='size-8' />
             <p className='flex items-center justify-center'>Add Users</p>
           </button>
         </div>
-        <AdminUsers />
+        <AdminUsers onOpenSidebar={() => handleOpenUsersSidebar('edit')} />
+        <UsersSidebar isOpen={isUsersSidebarOpen} onClose={handleCloseUsersSidebar} mode={sidebarMode} />
       </div>
 
-      <MoviesSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} mode={sidebarMode} />
     </main>
   );
 }

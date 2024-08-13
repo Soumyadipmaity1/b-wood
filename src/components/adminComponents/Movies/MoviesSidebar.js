@@ -78,7 +78,7 @@ const MoviesSidebar = ({ isOpen, onClose, mode }) => {
                     <select
                         value={language}
                         onChange={handleLanguages}
-                        className='text-black p-1 pl-3 rounded-md focus:ring-2 focus:ring-neon'
+                        className='text-black p-1 pl-3 rounded-md cursor-pointer focus:ring-2 focus:ring-neon'
                     >
                         {languageOptions.map((option) => (
                             <option key={option.value} value={option.value}>{option.label}</option>
@@ -91,7 +91,7 @@ const MoviesSidebar = ({ isOpen, onClose, mode }) => {
                     <select
                         value={genre}
                         onChange={handleGenre}
-                        className='text-black p-1 pl-3 rounded-md focus:ring-2 focus:ring-neon'
+                        className='text-black p-1 pl-3 rounded-md cursor-pointer focus:ring-2 focus:ring-neon'
                     >
                         {genreOptions.map((genreOption) => (
                             <option key={genreOption.value} value={genreOption.value}>{genreOption.label}</option>
@@ -144,7 +144,7 @@ const MoviesSidebar = ({ isOpen, onClose, mode }) => {
                                 <button
                                     type='button'
                                     onClick={() => removeCastMember(index)}
-                                    className='text-red-500 text-sm self-end transition duration-150 ease-in-out hover:scale-105'
+                                    className='text-red-500 text-sm self-end transition duration-150 ease-in-out cursor-pointer hover:scale-105'
                                 >
                                     Remove
                                 </button>
