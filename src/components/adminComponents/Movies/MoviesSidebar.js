@@ -48,7 +48,7 @@ const MoviesSidebar = ({ isOpen, onClose, mode }) => {
 
     return (
         <div
-            className={`fixed right-0 top-0 bottom-0 w-96 p-12 pt-14 bg-black z-[60] border-l-2 border-l-neon overflow-scroll scrollbar-hidden transition-transform duration-300 ${isOpen ? 'transform translate-x-0' : 'transform translate-x-full'
+            className={`fixed right-0 top-0 bottom-0 w-full lg:w-96 p-12 pt-14 bg-black z-[60] border-l-2 border-l-neon overflow-scroll scrollbar-hidden transition-transform duration-300 ${isOpen ? 'transform translate-x-0' : 'transform translate-x-full'
                 }`}
         >
             <FaTimes

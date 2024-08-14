@@ -70,7 +70,6 @@ const AdminReservations = () => {
                 ))}
             </div>
         </div>
-        {/* <ReservationsSidebar /> */}
         </>
     );
 }
