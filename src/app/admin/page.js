@@ -7,23 +7,34 @@ import AdminUsers from '../../components/adminComponents/Users/AdminUsers';
 import { FaPlusCircle } from 'react-icons/fa';
 import MoviesSidebar from '../../components/adminComponents/Movies/MoviesSidebar';
 import UsersSidebar from '../../components/adminComponents/Users/UsersSidebar';
+import TheatresSidebar from '../../components/adminComponents/Theatres/TheatresSidebar';
 
 function Admin() {
   const [isMoviesSidebarOpen, setMoviesSidebarOpen] = useState(false);
   const [isUsersSidebarOpen, setUsersSidebarOpen] = useState(false);
+  const [isTheatresSidebarOpen, setTheatresSidebarOpen] = useState(false);
   const [sidebarMode, setSidebarMode] = useState('add');
 
   const handleOpenMoviesSidebar = (mode) => {
     setUsersSidebarOpen(false);
+    setTheatresSidebarOpen(false);
     setSidebarMode(mode);
     setMoviesSidebarOpen(true);
   };
 
   const handleOpenUsersSidebar = (mode) => {
     setMoviesSidebarOpen(false);
+    setTheatresSidebarOpen(false);
     setSidebarMode(mode);
     setUsersSidebarOpen(true);
   };
+
+  const handleOpenTheatresSidebar = (mode) => {
+    setMoviesSidebarOpen(false);
+    setUsersSidebarOpen(false);
+    setSidebarMode(mode);
+    setTheatresSidebarOpen(true);
+  }
 
   const handleCloseMoviesSidebar = () => {
     setMoviesSidebarOpen(false);
@@ -32,6 +43,10 @@ function Admin() {
   const handleCloseUsersSidebar = () => {
     setUsersSidebarOpen(false);
   };
+
+  const handleCloseTheatresSidebar = () => {
+    setTheatresSidebarOpen(false);
+  }
 
   return (
     <main className='px-10 pt-20'>
@@ -53,12 +68,15 @@ function Admin() {
       <div className="p-6">
         <div className='flex justify-between'>
           <h1 className="text-3xl text-neon font-bold">Existing Theatres</h1>
-          <button className='flex items-center justify-around p-1 gap-2 pr-3 text-black font-bold bg-neon rounded-full cursor-pointer transition ease-in-out duration-150 hover:scale-105'>
+          <button
+            onClick={() => handleOpenTheatresSidebar('add')}
+            className='flex items-center justify-around p-1 gap-2 pr-3 text-black font-bold bg-neon rounded-full cursor-pointer transition ease-in-out duration-150 hover:scale-105'>
             <FaPlusCircle className='size-8' />
             <p className='flex items-center justify-center'>Add Theatres</p>
           </button>
         </div>
-        <AdminTheatres />
+        <AdminTheatres onOpenSidebar={() => handleOpenTheatresSidebar('edit')} />
+        <TheatresSidebar isOpen={isTheatresSidebarOpen} onClose={handleCloseTheatresSidebar} mode={sidebarMode} />
       </div>
 
       <div className="p-6">
