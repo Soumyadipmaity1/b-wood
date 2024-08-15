@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function Ticket() {
-  return (
-    <div>
-Ticket
-    </div>
-  )
+  return <div>Ticket</div>;
 }
 
-export default Ticket
+export default Ticket;
