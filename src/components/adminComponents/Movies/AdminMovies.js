@@ -1,9 +1,15 @@
 'use client';
-import React, { useState } from 'react';
 import Image from 'next/image';
 import MoviesSidebar from './MoviesSidebar';
+import {getMovies} from "../../../actions/movie"
+import { useEffect, useState } from 'react';
+
+   
 
 const Card = ({ title, imageSrc, onClick }) => {
+  
+
+
     return (
         <div
             className="relative border-2 ml-4 w-60 cursor-pointer text-center border-neon rounded-xl shadow-lg flex flex-col justify-center p-2 transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-opacity-80"
@@ -78,18 +84,34 @@ const AdminMovies = ({ onOpenSidebar }) => {
         }
     ];
 
+    const [movies, setMovies] = useState([]);
+  
+    useEffect(() => {
+      const fetchMovies = async () => {
+        try {
+          const response = await getMovies();
+          const data = await response.json();
+          setMovies(data);
+        } catch (error) {
+          console.error('Error fetching movies:', error);
+        }
+      };
+  
+      fetchMovies();
+    }, []);
+
     return (
         <>
             <div className="w-full h-full overflow-x-auto py-5 pr-2 rounded-xl" style={{ scrollbarWidth: 'none' }}>
                 <div className="flex space-x-6" style={{ minWidth: 'max-content' }}>
-                    {resources.map((resource, index) => (
-                        <Card
-                            key={index}
-                            title={resource.title}
-                            imageSrc={resource.imageSrc}
-                            onClick={handleCardClick}
-                        />
-                    ))}
+                {movies.map((movie, index) => (
+        <Card
+          key={index}
+          title={movie.title}
+        //   imageSrc={movie.imageSrc}
+          onClick={() => handleCardClick(movie)}
+        />
+      ))}
                 </div>
             </div>
             <MoviesSidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} />

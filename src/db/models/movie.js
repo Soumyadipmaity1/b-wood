@@ -8,9 +8,9 @@ const MovieSchema = new mongoose.Schema({
   release_date: { type: Date, required: true },
   cast: [
     {
-      name: { type: String, required: true },
-      character: { type: String, required: true },
-      image: { type: String, required: true },
+      name: { type: String, required: false },
+      character: { type: String, required: false },
+      image: { type: String, required: false },
     },
   ],
   description: { type: String, required: true },
