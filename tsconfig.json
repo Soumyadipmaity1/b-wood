@@ -26,8 +26,12 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "src/app/movies/booking/ticket/payment/page.js", "src/app/movies/booking/ticket/page.js", "src/app/movies/booking/page.js", "src/app/movies/page.js"  ],
+    "**/*.tsx",
+    "src/app/movies/booking/ticket/payment/page.js",
+    "src/app/movies/booking/ticket/page.js",
+    "src/app/movies/booking/page.js",
+    "src/app/movies/page.js"
+  ],
   "exclude": [
     "node_modules"
   ]
