@@ -56,7 +56,7 @@ const MoviesSidebar = ({ isOpen, onClose, mode }) => {
                 onClick={onClose}
             />
             <form className='flex flex-col gap-8'>
-            <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-2'>
                     <label className='text-neon font-semibold'>Title</label>
                     <input
                         type='text'
