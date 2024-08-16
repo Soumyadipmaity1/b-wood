@@ -27,58 +27,13 @@ const Card = ({ title, imageSrc, onClick }) => {
 
 const AdminMovies = ({ onOpenSidebar }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [mode,setMode]=useState("")
-  const handleCardClick = () => {
-    onOpenSidebar();
-    setMode("add")
+  const handleCardClick = (movie) => {
+    onOpenSidebar(movie._id);
   };
 
   const handleSidebarClose = () => {
     setSidebarOpen(false);
   };
-
-  const resources = [
-    {
-      title: "Deadpool and Wolverine",
-      imageSrc: "/image.png",
-    },
-    {
-      title: "Deadpool and Wolverine",
-      imageSrc: "/image.png",
-    },
-    {
-      title: "Deadpool and Wolverine",
-      imageSrc: "/image.png",
-    },
-    {
-      title: "Deadpool and Wolverine",
-      imageSrc: "/image.png",
-    },
-    {
-      title: "Deadpool and Wolverine",
-      imageSrc: "/image.png",
-    },
-    {
-      title: "Deadpool and Wolverine",
-      imageSrc: "/image.png",
-    },
-    {
-      title: "Deadpool and Wolverine",
-      imageSrc: "/image.png",
-    },
-    {
-      title: "Deadpool and Wolverine",
-      imageSrc: "/image.png",
-    },
-    {
-      title: "Deadpool and Wolverine",
-      imageSrc: "/image.png",
-    },
-    {
-      title: "Deadpool and Wolverine",
-      imageSrc: "/image.png",
-    },
-  ];
 
   const [movies, setMovies] = useState([]);
 
@@ -86,14 +41,14 @@ const AdminMovies = ({ onOpenSidebar }) => {
     const fetchMovies = async () => {
       try {
         const response = await getMovies();
-        // const data = await response.json();
-        setMovies(response);
-        console.log(response);
+        console.log(response)
+        if(response){
+            setMovies(response);
+        }
       } catch (error) {
         console.error("Error fetching movies:", error);
       }
     };
-
     fetchMovies();
   }, []);
 
@@ -114,7 +69,7 @@ const AdminMovies = ({ onOpenSidebar }) => {
           ))}
         </div>
       </div>
-      <MoviesSidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} mode={mode} />
+      <MoviesSidebar isOpen={isSidebarOpen} onClose={handleSidebarClose}/>
     </>
   );
 };

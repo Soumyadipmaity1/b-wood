@@ -14,11 +14,13 @@ function Admin() {
   const [isUsersSidebarOpen, setUsersSidebarOpen] = useState(false);
   const [isTheatresSidebarOpen, setTheatresSidebarOpen] = useState(false);
   const [sidebarMode, setSidebarMode] = useState('add');
+  const [movieId, setMovieId] = useState("");
 
-  const handleOpenMoviesSidebar = (mode) => {
+  const handleOpenMoviesSidebar = (mode,id,cast) => {
     setUsersSidebarOpen(false);
     setTheatresSidebarOpen(false);
     setSidebarMode(mode);
+    setMovieId(id);
     setMoviesSidebarOpen(true);
   };
 
@@ -61,8 +63,8 @@ function Admin() {
             <p className='hidden lg:flex items-center justify-center'>Add Movies</p>
           </button>
         </div>
-        <AdminMovies onOpenSidebar={() => handleOpenMoviesSidebar('edit')} />
-        <MoviesSidebar isOpen={isMoviesSidebarOpen} onClose={handleCloseMoviesSidebar} mode={sidebarMode} />
+        <AdminMovies onOpenSidebar={(id,cast) => {handleOpenMoviesSidebar('edit',id,cast)}} />
+        <MoviesSidebar isOpen={isMoviesSidebarOpen} onClose={handleCloseMoviesSidebar} mode={sidebarMode} movieId={movieId} />
       </div>
 
       <div className="lg:p-6">
