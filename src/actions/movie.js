@@ -1,34 +1,53 @@
 "use server";
-
-import mongoose from "mongoose";
 import Movie from "../db/models/movie.js";
 import connectDB from "../db/database.js";
+import Cast from '../db/models/cast.js'
 
-// Create a new movie
-export const newMovie = async (data) => {
+export const newMovie = async (data,cast) => {
   await connectDB()
-
-  console.log(data);
   try {
-    const movie = new Movie(data);
-    await movie.save();
-    return movie;
+
+    const castIds = await Promise.all(cast.map(async (item) => {
+      const newCast = new Cast({
+        name: item.name,
+        character: item.character,
+        image: item.image,
+      });
+      const res = await newCast.save();
+      return res._id; // Return the ObjectId of the saved cast member
+    }));
+    const newMovie=new Movie({
+      title:data.get('title'),
+      images:data.get('images'),
+      languages:data.get('languages'),
+      genre:data.get('genre'),
+      release_date:new Date(data.get('release_date')),
+      cast:castIds,
+      description:data.get('description'),
+      duration:data.get('duration'),
+    });
+    console.log(newMovie);
+    await newMovie.save();
+    return newMovie.toObject();
   } catch (error) {
     console.error(error);
   }
 };
 
 // Get all movies
-export const getMovies = async (data) => {
-  await connectDB()
-
+export const getMovies = async () => {
+  await connectDB();
   try {
-    const movies = await Movie.find();
+    // Use .lean() to get plain JavaScript objects instead of Mongoose documents
+    const movies = await Movie.find().lean();
+    // console.log(movies);
     return movies;
   } catch (error) {
-    console.error(error);
+    console.log(error);
+    // throw error;
   }
 };
+
 
 // Get a movie by ID
 export const getMoviebyId = async (data) => {

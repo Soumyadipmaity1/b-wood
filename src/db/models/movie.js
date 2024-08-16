@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose,{Schema} from "mongoose";
 
 const MovieSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -6,13 +6,7 @@ const MovieSchema = new mongoose.Schema({
   languages: { type: String, enum: ["Hindi", "English"] },
   genre: { type: String, enum: ["thriller", "romantic", "horror"] },
   release_date: { type: Date, required: true },
-  cast: [
-    {
-      name: { type: String, required: false },
-      character: { type: String, required: false },
-      image: { type: String, required: false },
-    },
-  ],
+  cast: [{type:Schema.Types.ObjectId, ref: 'Cast', default: null }],
   description: { type: String, required: true },
   duration: { type: String },
 });

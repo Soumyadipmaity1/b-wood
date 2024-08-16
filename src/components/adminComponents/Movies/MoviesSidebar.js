@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import TimeInput from "./TimeInput";
-import { newMovie } from "../../../actions/movie";
+import { createCast, newMovie } from "../../../actions/movie";
 
 const MoviesSidebar = ({ isOpen, onClose, mode }) => {
   const [formData, setFormData] = useState({
@@ -13,7 +13,7 @@ const MoviesSidebar = ({ isOpen, onClose, mode }) => {
     release_date: "",
     description: "",
   },[]);
-
+  const [time, setTime] = useState({ hours: '', minutes: '', seconds: '' });
   const languageOptions = [
     { label: "Choose the Language", value: "NULL" },
     { label: "Hindi", value: "Hindi" },
@@ -28,11 +28,23 @@ const MoviesSidebar = ({ isOpen, onClose, mode }) => {
   ];
 
   const [cast, setCast] = useState([{ name: "", character: "", image: null }]);
-
-  const handleCastChange = (index, event) => {
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
+  const handleCastChange =async (index, event) => {
     const { name, value, files } = event.target;
     const updatedCast = [...cast];
-    updatedCast[index][name] = files ? files[0] : value;
+    if (files) {
+      const base64 = await fileToBase64(files[0]);
+      updatedCast[index][name] = base64;
+    } else {
+      updatedCast[index][name] = value;
+    }
     setCast(updatedCast);
   };
 
@@ -48,9 +60,20 @@ const MoviesSidebar = ({ isOpen, onClose, mode }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const newtime=time.hours+"h "+time.minutes+'m '+time.seconds+"s ";
+    const data = new FormData();
+    data.append('title', formData.title);
+    if (formData.poster) {
+      const posterBase64 = await fileToBase64(formData.poster);
+      data.append('images', posterBase64);
+    }
+    data.append('languages', formData.language);
+    data.append('genre', formData.genre);
+    data.append('release_date', formData.release_date);
+    data.append('description', formData.description);
+    data.append('duration', newtime);    
     try {
-      const movie = await newMovie(formData);
+      const movie=await newMovie(data,cast);
       console.log("Movie created:", movie);
     } catch (error) {
       console.error("Error creating movie:", error.message);
@@ -215,7 +238,7 @@ const MoviesSidebar = ({ isOpen, onClose, mode }) => {
           <label htmlFor="input" className="text-neon">
             Duration
           </label>
-          <TimeInput />
+          <TimeInput time={time} setTime={setTime} />
         </div>
 
         {mode === "add" ? (
