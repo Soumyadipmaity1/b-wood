@@ -66,7 +66,7 @@ function Admin() {
   };
 
   return (
-    <main className='px-4 lg:px-10 pt-36 lg:pt-20 flex flex-col gap-10'>
+    <main className='px-4 lg:px-10 pt-36 lg:pt-32 flex flex-col gap-10'>
 
       <div className="lg:p-6">
         <div className='flex items-center justify-between'>
