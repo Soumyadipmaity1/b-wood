@@ -1,10 +1,29 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
+
+// Mock function to fetch movies list (replace this with actual API call)
+const fetchMoviesList = async () => {
+    return [
+        { id: '1', title: 'Movie 1' },
+        { id: '2', title: 'Movie 2' },
+        { id: '3', title: 'Movie 3' },
+        // Add more movies as needed
+    ];
+};
 
 const TheatresSidebar = ({ isOpen, onClose, mode }) => {
     const [theatre, setTheatre] = useState({ name: '', city: '', image: '', moviesId: '' });
     const [showtimes, setShowtimes] = useState([{ startAt: '', endAt: '', price: '', moviesId: '' }]);
+    const [moviesList, setMoviesList] = useState([]);
+
+    useEffect(() => {
+        const fetchMovies = async () => {
+            const movies = await fetchMoviesList(); // Replace with actual API call
+            setMoviesList(movies);
+        };
+        fetchMovies();
+    }, []);
 
     const handleTheatreChange = (event) => {
         const { name, value } = event.target;
@@ -65,9 +84,8 @@ const TheatresSidebar = ({ isOpen, onClose, mode }) => {
                 <div className='flex flex-col gap-2'>
                     <label className='text-neon font-semibold'>Image</label>
                     <input
-                        type='text'
+                        type='file'
                         name='image'
-                        placeholder='Enter image URL...'
                         value={theatre.image}
                         onChange={handleTheatreChange}
                         className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
@@ -76,14 +94,19 @@ const TheatresSidebar = ({ isOpen, onClose, mode }) => {
 
                 <div className='flex flex-col gap-2'>
                     <label className='text-neon font-semibold'>MoviesId</label>
-                    <input
-                        type='text'
+                    <select
                         name='moviesId'
-                        placeholder='Enter the Movie ID...'
                         value={theatre.moviesId}
                         onChange={handleTheatreChange}
                         className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
-                    />
+                    >
+                        <option value=''>Select a Movie</option>
+                        {moviesList.map((movie) => (
+                            <option key={movie.id} value={movie.id}>
+                                {movie.title} (ID: {movie.id})
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <button
@@ -127,14 +150,19 @@ const TheatresSidebar = ({ isOpen, onClose, mode }) => {
                         />
 
                         <label className='text-neon font-semibold'>MoviesId</label>
-                        <input
-                            type='text'
+                        <select
                             name='moviesId'
-                            placeholder='Enter the Movie ID...'
                             value={showtime.moviesId}
                             onChange={(e) => handleShowtimeChange(index, e)}
                             className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
-                        />
+                        >
+                            <option value=''>Select a Movie</option>
+                            {moviesList.map((movie) => (
+                                <option key={movie.id} value={movie.id}>
+                                    {movie.title} (ID: {movie.id})
+                                </option>
+                            ))}
+                        </select>
 
                         {showtimes.length > 1 && (
                             <button
