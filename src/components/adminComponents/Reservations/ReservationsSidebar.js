@@ -1,117 +1,151 @@
-'use client'
-import React, { useState } from 'react'
-import { FaTimes } from 'react-icons/fa';
+'use client';
+import React, { useState } from 'react';
+import { FaTimes, FaTicketAlt } from 'react-icons/fa'; // Updated icon import
 
-const ReservationsSidebar = () => {
+const ReservationsSidebar = ({ isOpen, onClose, mode }) => {
+    const [reservations, setReservations] = useState([{ theaterName: '', amount: '', totalPrice: '', orderId: '', date: '', showtime: '', name: '', city: '' }]);
 
-    const languageOptions = [
-        { label: 'Choose the Language', value: 'NULL' },
-        { label: 'Hindi', value: 'Hindi' },
-        { label: 'English', value: 'English' }
-    ];
-
-    const genreOptions = [
-        { label: 'Choose the Genre', value: 'null' },
-        { label: 'Thriller', value: 'thriller' },
-        { label: 'Romantic', value: 'romantic' },
-        { label: 'Horror', value: 'horror' }
-    ];
-
-    const [language, setLanguage] = useState('NULL');
-    const [genre, setGenre] = useState('null');
-
-    const handleLanguages = (e) => {
-        setLanguage(e.target.value);
+    const handleReservationChange = (index, event) => {
+        const { name, value } = event.target;
+        const updatedReservations = [...reservations];
+        updatedReservations[index][name] = value;
+        setReservations(updatedReservations);
     };
 
-    const handleGenre = (e) => {
-        setGenre(e.target.value);
-    }
+    const addReservation = () => {
+        setReservations([...reservations, { theaterName: '', amount: '', totalPrice: '', orderId: '', date: '', showtime: '', name: '', city: '' }]);
+    };
 
+    const removeReservation = (index) => {
+        const updatedReservations = [...reservations];
+        updatedReservations.splice(index, 1);
+        setReservations(updatedReservations);
+    };
 
     return (
-        <>
-        <div className="absolute inset-0 flex items-center justify-center bg-black opacity-60 z-[55]"></div>
-        <div className='fixed right-0 top-0 bottom-0 p-12 pt-14 bg-black z-[60] border-l-2 border-l-neon overflow-scroll scrollbar-hidden'>
-            <FaTimes className='absolute top-5 left-5 size-6 text-neon border-0' />
-            <form className='flex flex-col gap-5'>
+        <div
+            className={`fixed right-0 top-0 bottom-0 w-full lg:w-96 p-12 pt-14 bg-black z-[60] border-l-2 border-l-neon overflow-scroll scrollbar-hidden transition-transform duration-300 ${isOpen ? 'transform translate-x-0' : 'transform translate-x-full'
+                }`}
+        >
+            <FaTimes
+                className='absolute top-5 left-5 size-6 text-neon cursor-pointer'
+                onClick={onClose}
+            />
+            <form className='flex flex-col gap-8'>
+                {reservations.map((reservation, reservationIndex) => (
+                    <div key={reservationIndex} className='flex flex-col gap-8'>
 
-                <div className='flex flex-col gap-2'>
-                    <label for='input' className='text-neon font-semibold'>Title</label>
-                    <input
-                        type='text'
-                        placeholder='Enter the title...'
-                        className='p-1 pl-3 w-64 rounded-sm text-black focus:ring-2 focus:ring-neon'
-                    />
-                </div>
+                        <div className='flex flex-col gap-2'>
+                            <label className='text-neon font-semibold'>Customer Name</label>
+                            <input
+                                type='text'
+                                name='name'
+                                placeholder='Enter the customer name...'
+                                value={reservation.name}
+                                onChange={(e) => handleReservationChange(reservationIndex, e)}
+                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
+                            />
+                        </div>
 
-                <div className='flex flex-col gap-2'>
-                    <label for='input' className='text-neon font-semibold'>Poster</label>
-                    <input
-                        type='file'
-                        placeholder='Enter the title...'
-                        className='p-1 pl-3 w-64 rounded-sm'
-                    />
-                </div>
+                        <div className='flex flex-col gap-2'>
+                            <label className='text-neon font-semibold'>City</label>
+                            <input
+                                type='text'
+                                name='city'
+                                placeholder='Enter the city...'
+                                value={reservation.city}
+                                onChange={(e) => handleReservationChange(reservationIndex, e)}
+                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
+                            />
+                        </div>
 
-                <div className='flex flex-col gap-2'>
-                    <label className='text-neon font-semibold'>Language</label>
-                    <select
-                        value={language}
-                        onChange={handleLanguages}
-                        className='text-black p-1 pl-3 rounded-sm focus:ring-2 focus:ring-neon'
-                    >
-                        {languageOptions.map((option) => (
-                            <option value={option.value}>{option.label}</option>
-                        ))}
-                    </select>
-                </div>
+                        <div className='flex flex-col gap-2'>
+                            <label className='text-neon font-semibold'>Theater Name</label>
+                            <input
+                                type='text'
+                                name='theaterName'
+                                placeholder='Enter the theater name...'
+                                value={reservation.theaterName}
+                                onChange={(e) => handleReservationChange(reservationIndex, e)}
+                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
+                            />
+                        </div>
 
-                <div className='flex flex-col gap-2'>
-                    <label for='input' className='text-neon font-semibold'>Title</label>
-                    <select
-                        value={genre}
-                        onChange={handleGenre}
-                        className='text-black p-1 pl-3 rounded-sm focus:ring-2 focus:ring-neon'
-                    >
-                        {genreOptions.map((genreOption) => (
-                            <option value={genreOption.value}>{genreOption.label}</option>
-                        ))}
-                    </select>
-                </div>
+                        <div className='flex flex-col gap-2'>
+                            <label className='text-neon font-semibold'>Amount</label>
+                            <input
+                                type='number'
+                                name='amount'
+                                placeholder='Enter the amount...'
+                                value={reservation.amount}
+                                onChange={(e) => handleReservationChange(reservationIndex, e)}
+                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
+                            />
+                        </div>
 
-                <div className='flex flex-col gap-2'>
-                    <label for='input' className='text-neon'>Release Date</label>
-                    <input
-                        type='date'
-                        placeholder='Enter the title...'
-                        className='p-1 pl-3 w-64 rounded-sm text-black' 
-                    />
-                </div>
+                        <div className='flex flex-col gap-2'>
+                            <label className='text-neon font-semibold'>Total Price</label>
+                            <input
+                                type='number'
+                                name='totalPrice'
+                                placeholder='Enter the total price...'
+                                value={reservation.totalPrice}
+                                onChange={(e) => handleReservationChange(reservationIndex, e)}
+                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
+                            />
+                        </div>
 
-                <div className='flex flex-col gap-2'>
-                    <label for='input' className='text-neon'>Description</label>
-                    <textarea
-                        type='text'
-                        rows={4}
-                        cols={4}
-                        placeholder='Enter the description...'
-                        className='p-1 pl-3 w-64 rounded-sm text-black focus:ring-2 focus:ring-neon' 
-                    />
-                </div>
+                        <div className='flex flex-col gap-2'>
+                            <label className='text-neon font-semibold'>Order ID</label>
+                            <input
+                                type='text'
+                                name='orderId'
+                                placeholder='Enter the order ID...'
+                                value={reservation.orderId}
+                                onChange={(e) => handleReservationChange(reservationIndex, e)}
+                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
+                            />
+                        </div>
 
-                <div className='flex flex-col gap-2'>
-                    <label for='input' className='text-neon'>Duration</label>
-                </div>
-                
-                <div className='flex items-center justify-around gap-3 pt-10'>
-                    <button type='submit' className='bg-neon text-black py-2 px-5 font-bold rounded-sm transition duration-150 ease-in-out hover:scale-110'>UPDATE</button>
-                    <button type='submit' className='bg-black border-2 border-neon text-neon py-2 px-5 font-bold rounded-sm transition duration-150 ease-in-out hover:scale-110'>DELETE</button>
-                </div>
+                        <div className='flex flex-col gap-2'>
+                            <label className='text-neon font-semibold'>Date</label>
+                            <input
+                                type='datetime-local'
+                                name='date'
+                                value={reservation.date}
+                                onChange={(e) => handleReservationChange(reservationIndex, e)}
+                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
+                            />
+                        </div>
+
+                        <div className='flex flex-col gap-2'>
+                            <label className='text-neon font-semibold'>Showtime</label>
+                            <input
+                                type='text'
+                                name='showtime'
+                                placeholder='Enter the showtime...'
+                                value={reservation.showtime}
+                                onChange={(e) => handleReservationChange(reservationIndex, e)}
+                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
+                            />
+                        </div>
+
+                    </div>
+                ))}
+
+                {mode === 'add' ? (
+                    <div className='flex items-center justify-around pt-10'>
+                        <button type='submit' className='bg-neon text-black py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>ADD RESERVATION</button>
+                    </div>
+                ) : (
+                    <div className='flex items-center justify-around gap-3 pt-10'>
+                        <button type='submit' className='bg-neon text-black py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>UPDATE</button>
+                        <button type='submit' className='bg-black border-2 border-neon text-neon py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>DELETE</button>
+                    </div>
+                )}
             </form>
         </div>
-        </>
-    )
-}
+    );
+};
 
-export default ReservationsSidebar
+export default ReservationsSidebar;
