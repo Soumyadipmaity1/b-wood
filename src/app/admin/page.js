@@ -14,11 +14,14 @@ function Admin() {
   const [isUsersSidebarOpen, setUsersSidebarOpen] = useState(false);
   const [isTheatresSidebarOpen, setTheatresSidebarOpen] = useState(false);
   const [sidebarMode, setSidebarMode] = useState('add');
+  const [movieId, setMovieId] = useState("");
+  const [theaterId, setTheaterId] = useState("");
 
-  const handleOpenMoviesSidebar = (mode) => {
+  const handleOpenMoviesSidebar = (mode,id) => {
     setUsersSidebarOpen(false);
     setTheatresSidebarOpen(false);
     setSidebarMode(mode);
+    setMovieId(id);
     setMoviesSidebarOpen(true);
   };
 
@@ -29,10 +32,11 @@ function Admin() {
     setUsersSidebarOpen(true);
   };
 
-  const handleOpenTheatresSidebar = (mode) => {
+  const handleOpenTheatresSidebar = (mode,id) => {
     setMoviesSidebarOpen(false);
     setUsersSidebarOpen(false);
     setSidebarMode(mode);
+    setTheaterId(id);
     setTheatresSidebarOpen(true);
   }
 
@@ -61,8 +65,8 @@ function Admin() {
             <p className='hidden lg:flex items-center justify-center'>Add Movies</p>
           </button>
         </div>
-        <AdminMovies onOpenSidebar={() => handleOpenMoviesSidebar('edit')} />
-        <MoviesSidebar isOpen={isMoviesSidebarOpen} onClose={handleCloseMoviesSidebar} mode={sidebarMode} />
+        <AdminMovies onOpenSidebar={(id) => {handleOpenMoviesSidebar('edit',id)}} />
+        <MoviesSidebar isOpen={isMoviesSidebarOpen} onClose={handleCloseMoviesSidebar} mode={sidebarMode} movieId={movieId} />
       </div>
 
       <div className="lg:p-6">
@@ -75,8 +79,8 @@ function Admin() {
             <p className='hidden lg:flex items-center justify-center'>Add Theatres</p>
           </button>
         </div>
-        <AdminTheatres onOpenSidebar={() => handleOpenTheatresSidebar('edit')} />
-        <TheatresSidebar isOpen={isTheatresSidebarOpen} onClose={handleCloseTheatresSidebar} mode={sidebarMode} />
+        <AdminTheatres onOpenSidebar={(id) => {handleOpenTheatresSidebar('edit',id)}} />
+        <TheatresSidebar isOpen={isTheatresSidebarOpen} onClose={handleCloseTheatresSidebar} mode={sidebarMode} theaterId={theaterId} />
       </div>
 
       <div className="lg:p-6">

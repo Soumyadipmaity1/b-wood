@@ -1,268 +1,314 @@
-'use client';
-import React, { useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
+"use client";
+import React, { useState, useEffect } from "react";
+import { FaTimes } from "react-icons/fa";
+import {createShowtime, createTheater, deleteTheaterBy, getShowtimeBytheaterId, getTheaterById, updateTheaterById}from '../../../actions/theater.js'
+import { getAllMovieIds } from "../../../actions/movie.js";
 
-const TheatresSidebar = ({ isOpen, onClose, mode }) => {
-    const [dates, setDates] = useState([{ date: '', movies: [{ movieID: '', showtimes: [{ time: '', price: '', seats: [{ seatNumber: '', isReserved: false }] }] }] }]);
-
-    const handleDateChange = (index, event) => {
-        const { name, value } = event.target;
-        const updatedDates = [...dates];
-        updatedDates[index][name] = value;
-        setDates(updatedDates);
+const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
+  const [theatre, setTheatre] = useState({
+    name: "",
+    city: "",
+    image: null,
+    moviesId: "",
+  });
+  const [showtimes, setShowtimes] = useState([
+    { startAt: "", endAt: "", price: 0, moviesId: "" ,theatreId:""},
+  ]);
+  const [moviesList, setMoviesList] = useState([]);
+  let movieId=[]
+  useEffect(() => {
+    const fetchMovies = async () => {
+      const movies = await getAllMovieIds();
+      setMoviesList(movies);
+      console.log("Movies fetched:", movies);
+      // console.log("this is mode and ",mode,theatreId);
     };
-
-    const handleMovieChange = (dateIndex, movieIndex, event) => {
-        const { name, value } = event.target;
-        const updatedDates = [...dates];
-        updatedDates[dateIndex].movies[movieIndex][name] = value;
-        setDates(updatedDates);
+    const fetchData = async () => {
+      if(theaterId){
+        const res=await getTheaterById(theaterId);
+        console.log("theater",res)
+        if(res){
+          setTheatre({
+            name:res.name,
+            city:res.city,
+            image:res.image,
+          })
+          movieId=res.movieId
+        }
+        const showres=await getShowtimeBytheaterId(theaterId);
+        console.log(showres)
+        if(showres){
+          setShowtimes(showres);
+        }
+        if(mode==='add'){
+          setTheatre({
+            name:"",
+            city:"",
+            image:null,
+          })
+          setShowtimes(
+            { startAt: "", endAt: "", price: 0, moviesId: "" ,theatreId:""},
+          )
+        }
+      }
     };
+    fetchMovies();
+    console.log(mode,theaterId)
+    if(theaterId){
+      fetchData();
+    }
+  }, [mode,theaterId]);
 
-    const handleShowtimeChange = (dateIndex, movieIndex, showtimeIndex, event) => {
-        const { name, value } = event.target;
-        const updatedDates = [...dates];
-        updatedDates[dateIndex].movies[movieIndex].showtimes[showtimeIndex][name] = value;
-        setDates(updatedDates);
-    };
+  const handleTheatreChange = (event) => {
+    const { name, value } = event.target;
+    setTheatre((prev) => ({ ...prev, [name]: value }));
+  };
 
-    const handleSeatChange = (dateIndex, movieIndex, showtimeIndex, seatIndex, event) => {
-        const { name, value, type, checked } = event.target;
-        const updatedDates = [...dates];
-        updatedDates[dateIndex].movies[movieIndex].showtimes[showtimeIndex].seats[seatIndex][name] = type === 'checkbox' ? checked : value;
-        setDates(updatedDates);
-    };
+  const handleShowtimeChange = (index, event) => {
+    const { name, value } = event.target;
+    const updatedShowtimes = [...showtimes];
+    if(name==='price'){
+      updatedShowtimes[index][name] = Number(value);
+    }else{
+      updatedShowtimes[index][name] = value;
+    }
+    setShowtimes(updatedShowtimes);
+  };
 
-    const addDate = () => {
-        setDates([...dates, { date: '', movies: [{ movieID: '', showtimes: [{ time: '', price: '', seats: [{ seatNumber: '', isReserved: false }] }] }] }]);
-    };
+  const addShowtime = () => {
+    setShowtimes([
+      ...showtimes,
+      { startAt: "", endAt: "", price: "", moviesId: "" },
+    ]);
+  };
 
-    const removeDate = (index) => {
-        const updatedDates = [...dates];
-        updatedDates.splice(index, 1);
-        setDates(updatedDates);
-    };
+  const removeShowtime = (index) => {
+    const updatedShowtimes = [...showtimes];
+    updatedShowtimes.splice(index, 1);
+    setShowtimes(updatedShowtimes);
+  };
 
-    const addMovie = (dateIndex) => {
-        const updatedDates = [...dates];
-        updatedDates[dateIndex].movies.push({ movieID: '', showtimes: [{ time: '', price: '', seats: [{ seatNumber: '', isReserved: false }] }] });
-        setDates(updatedDates);
-    };
+  const fileToBase64 = (file) => {
+    if (!(file instanceof Blob)) { // Check if file is a Blob type
+      throw new Error("File is not a Blob type");
+    }
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
 
-    const removeMovie = (dateIndex, movieIndex) => {
-        const updatedDates = [...dates];
-        updatedDates[dateIndex].movies.splice(movieIndex, 1);
-        setDates(updatedDates);
-    };
+  const handleSubmit=async (e)=>{
+    e.preventDefault();
+    // console.log(theatre)
+    const data=new FormData();
+    if(mode==='add'){
+      if(theatre.image){
+        const baseImage=await fileToBase64(theatre.image);
+        data.append('image',baseImage);
+      }
+      data.append('name',theatre.name)
+      data.append('city',theatre.city)
+      data.append('movieId',theatre.moviesId);
+      const newTheater=await createTheater(data);
+      console.log(newTheater);
+      const{_id}=newTheater
+      const showTimes=await createShowtime(showtimes,_id)
+      console.log(showTimes)
+    }
+  }
 
-    const addShowtime = (dateIndex, movieIndex) => {
-        const updatedDates = [...dates];
-        updatedDates[dateIndex].movies[movieIndex].showtimes.push({ time: '', price: '', seats: [{ seatNumber: '', isReserved: false }] });
-        setDates(updatedDates);
-    };
+  const updateTheater=async()=>{
+    try {
+      if (!movieId.find(id => id === theatre.moviesId)) {
+        movieId.push(theatre.moviesId);
+      }
+      const data=new FormData();
+      if(theatre.image){
+        const baseImage=await fileToBase64(theatre.image);
+        data.append('image',baseImage);
+      }
+      data.append('name',theatre.name)
+      data.append('city',theatre.city)
+      // data.append('movieId',movieId);
+      const res=await updateTheaterById(theaterId,data);
+      console.log(res);
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-    const removeShowtime = (dateIndex, movieIndex, showtimeIndex) => {
-        const updatedDates = [...dates];
-        updatedDates[dateIndex].movies[movieIndex].showtimes.splice(showtimeIndex, 1);
-        setDates(updatedDates);
-    };
+  const deleteTheater=async()=>{
+    try {
+      await deleteTheaterBy(theaterId);
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-    const addSeat = (dateIndex, movieIndex, showtimeIndex) => {
-        const updatedDates = [...dates];
-        updatedDates[dateIndex].movies[movieIndex].showtimes[showtimeIndex].seats.push({ seatNumber: '', isReserved: false });
-        setDates(updatedDates);
-    };
-
-    const removeSeat = (dateIndex, movieIndex, showtimeIndex, seatIndex) => {
-        const updatedDates = [...dates];
-        updatedDates[dateIndex].movies[movieIndex].showtimes[showtimeIndex].seats.splice(seatIndex, 1);
-        setDates(updatedDates);
-    };
-
-    return (
-        <div
-            className={`fixed right-0 top-0 bottom-0 w-full lg:w-96 p-12 pt-14 bg-black z-[60] border-l-2 border-l-neon overflow-scroll scrollbar-hidden transition-transform duration-300 ${isOpen ? 'transform translate-x-0' : 'transform translate-x-full'
-                }`}
-        >
-            <FaTimes
-                className='absolute top-5 left-5 size-6 text-neon cursor-pointer'
-                onClick={onClose}
-            />
-            <form className='flex flex-col gap-8'>
-                <div className='flex flex-col gap-2'>
-                    <label className='text-neon font-semibold'>Theatre Name</label>
-                    <input
-                        type='text'
-                        placeholder='Enter the theatre name...'
-                        className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
-                    />
-                </div>
-
-                <div className='flex flex-col gap-2'>
-                    <label className='text-neon font-semibold'>City</label>
-                    <input
-                        type='text'
-                        placeholder='Enter the city...'
-                        className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
-                    />
-                </div>
-
-                <div className='flex flex-col gap-2'>
-                    <label className='text-neon font-semibold'>Dates</label>
-                    {dates.map((dateItem, dateIndex) => (
-                        <div key={dateIndex} className='flex flex-col gap-2 mb-4 border-b pb-2'>
-                            <input
-                                type='date'
-                                name='date'
-                                value={dateItem.date}
-                                onChange={(e) => handleDateChange(dateIndex, e)}
-                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
-                            />
-
-                            <label className='text-neon font-semibold'>Movies</label>
-                            {dateItem.movies.map((movie, movieIndex) => (
-                                <div key={movieIndex} className='flex flex-col gap-2 mb-4 border-b pb-2'>
-                                    <input
-                                        type='text'
-                                        name='movieID'
-                                        placeholder='Movie ID'
-                                        value={movie.movieID}
-                                        onChange={(e) => handleMovieChange(dateIndex, movieIndex, e)}
-                                        className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
-                                    />
-
-                                    <label className='text-neon font-semibold'>Showtimes</label>
-                                    {movie.showtimes.map((showtime, showtimeIndex) => (
-                                        <div key={showtimeIndex} className='flex flex-col gap-2 mb-4 border-b pb-2'>
-                                            <input
-                                                type='time'
-                                                name='time'
-                                                placeholder='Showtime'
-                                                value={showtime.time}
-                                                onChange={(e) => handleShowtimeChange(dateIndex, movieIndex, showtimeIndex, e)}
-                                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
-                                            />
-
-                                            <input
-                                                type='number'
-                                                name='price'
-                                                placeholder='Ticket Price'
-                                                value={showtime.price}
-                                                onChange={(e) => handleShowtimeChange(dateIndex, movieIndex, showtimeIndex, e)}
-                                                className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
-                                            />
-
-                                            <div className='flex flex-col gap-2'>
-                                                <label className='text-neon'>Seats</label>
-                                                {showtime.seats.map((seat, seatIndex) => (
-                                                    <div key={seatIndex} className='flex gap-2 mb-2'>
-                                                        <input
-                                                            type='text'
-                                                            name='seatNumber'
-                                                            placeholder='Seat Number'
-                                                            value={seat.seatNumber}
-                                                            onChange={(e) => handleSeatChange(dateIndex, movieIndex, showtimeIndex, seatIndex, e)}
-                                                            className='p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon'
-                                                        />
-                                                        <label className='flex items-center text-neon'>
-                                                            Reserved
-                                                            <input
-                                                                type='checkbox'
-                                                                name='isReserved'
-                                                                checked={seat.isReserved}
-                                                                onChange={(e) => handleSeatChange(dateIndex, movieIndex, showtimeIndex, seatIndex, e)}
-                                                                className='ml-2'
-                                                            />
-                                                        </label>
-                                                        {showtime.seats.length > 1 && (
-                                                            <button
-                                                                type='button'
-                                                                onClick={() => removeSeat(dateIndex, movieIndex, showtimeIndex, seatIndex)}
-                                                                className='text-red-500 text-sm transition duration-150 ease-in-out cursor-pointer hover:scale-105'
-                                                            >
-                                                                Remove
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                ))}
-                                                <button
-                                                    type='button'
-                                                    onClick={() => addSeat(dateIndex, movieIndex, showtimeIndex)}
-                                                    className='bg-neon text-black py-2 px-4 font-bold rounded-md transition duration-150 ease-in-out hover:scale-105'
-                                                >
-                                                    Add Seat
-                                                </button>
-                                            </div>
-
-                                            {movie.showtimes.length > 1 && (
-                                                <button
-                                                    type='button'
-                                                    onClick={() => removeShowtime(dateIndex, movieIndex, showtimeIndex)}
-                                                    className='text-red-500 text-sm self-end transition duration-150 ease-in-out cursor-pointer hover:scale-105'
-                                                >
-                                                    Remove Showtime
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-                                    <button
-                                        type='button'
-                                        onClick={() => addShowtime(dateIndex, movieIndex)}
-                                        className='bg-neon text-black py-2 px-4 font-bold rounded-md transition duration-150 ease-in-out hover:scale-105'
-                                    >
-                                        Add Showtime
-                                    </button>
-                                    {dateItem.movies.length > 1 && (
-                                        <button
-                                            type='button'
-                                            onClick={() => removeMovie(dateIndex, movieIndex)}
-                                            className='text-red-500 text-sm self-end transition duration-150 ease-in-out cursor-pointer hover:scale-105'
-                                        >
-                                            Remove Movie
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
-                            <button
-                                type='button'
-                                onClick={() => addMovie(dateIndex)}
-                                className='bg-neon text-black py-2 px-4 font-bold rounded-md transition duration-150 ease-in-out hover:scale-105'
-                            >
-                                Add Movie
-                            </button>
-                            {dates.length > 1 && (
-                                <button
-                                    type='button'
-                                    onClick={() => removeDate(dateIndex)}
-                                    className='text-red-500 text-sm self-end transition duration-150 ease-in-out cursor-pointer hover:scale-105'
-                                >
-                                    Remove Date
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                    <button
-                        type='button'
-                        onClick={addDate}
-                        className='bg-neon text-black py-2 px-4 font-bold rounded-md transition duration-150 ease-in-out hover:scale-105'
-                    >
-                        Add Date
-                    </button>
-                </div>
-
-                {mode === 'add' ? (
-                    <div className='flex items-center justify-around pt-10'>
-                        <button type='submit' className='bg-neon text-black py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>ADD THEATRE</button>
-                    </div>
-                ) : (
-                    <div className='flex items-center justify-around gap-3 pt-10'>
-                        <button type='submit' className='bg-neon text-black py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>UPDATE</button>
-                        <button type='submit' className='bg-black border-2 border-neon text-neon py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110'>DELETE</button>
-                    </div>
-                )}
-            </form>
+  return (
+    <div
+      className={`fixed right-0 top-0 bottom-0 w-full lg:w-96 p-12 pt-14 bg-black z-[60] border-l-2 border-l-neon overflow-scroll scrollbar-hidden transition-transform duration-300 ${
+        isOpen ? "transform translate-x-0" : "transform translate-x-full"
+      }`}
+    >
+      <FaTimes
+        className="absolute top-5 left-5 size-6 text-neon cursor-pointer"
+        onClick={onClose}
+      />
+      <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-2">
+          <label className="text-neon font-semibold">Name</label>
+          <input
+            type="text"
+            name="name"
+            placeholder="Enter the theatre name..."
+            value={theatre.name}
+            onChange={handleTheatreChange}
+            className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
+          />
         </div>
-    );
+
+        <div className="flex flex-col gap-2">
+          <label className="text-neon font-semibold">City</label>
+          <input
+            type="text"
+            name="city"
+            placeholder="Enter the city..."
+            value={theatre.city}
+            onChange={handleTheatreChange}
+            className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-neon font-semibold">Image</label>
+          <input
+            type="file"
+            name="image"
+            // value={theatre.image}
+            onChange={(e) =>
+              setTheatre({ ...theatre, image: e.target.files[0] })}
+            className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-neon font-semibold">MoviesId</label>
+          <select
+            name="moviesId"
+            value={theatre.moviesId}
+            onChange={handleTheatreChange}
+            className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
+          >
+            <option value="">Select a Movie</option>
+            {moviesList.map((movie) => (
+              <option key={movie.id} value={movie.id}>
+                  {movie.title} (ID: {movie.id})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          type="button"
+          onClick={addShowtime}
+          className="bg-neon text-black py-2 px-4 font-bold rounded-md transition duration-150 ease-in-out hover:scale-105"
+        >
+          Add Showtime
+        </button>
+
+        {showtimes.map((showtime, index) => (
+          <div key={index} className="flex flex-col gap-2 mb-4 border-b pb-2">
+            <label className="text-neon font-semibold">Start At</label>
+            <input
+              type="time"
+              name="startAt"
+              placeholder="Start time..."
+              value={showtime.startAt}
+              onChange={(e) => handleShowtimeChange(index, e)}
+              className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
+            />
+
+            <label className="text-neon font-semibold">End At</label>
+            <input
+              type="date"
+              name="endAt"
+              placeholder="End time..."
+              value={showtime.endAt}
+              onChange={(e) => handleShowtimeChange(index, e)}
+              className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
+            />
+
+            <label className="text-neon font-semibold">Price</label>
+            <input
+              type="number"
+              name="price"
+              placeholder="Price..."
+              value={showtime.price}
+              onChange={(e) => handleShowtimeChange(index, e)}
+              className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
+            />
+
+            <label className="text-neon font-semibold">MoviesId</label>
+            <select
+              name="moviesId"
+              value={showtime.movieId}
+              onChange={(e) => handleShowtimeChange(index, e)}
+              className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
+            >
+              <option value="">Select a Movie</option>
+              {moviesList.map((movie) => (
+                <option key={movie.id} value={movie.id}>
+                  {movie.title} (ID: {movie.id})
+                </option>
+              ))}
+            </select>
+
+            {showtimes.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeShowtime(index)}
+                className="text-red-500 text-sm self-end transition duration-150 ease-in-out cursor-pointer hover:scale-105"
+              >
+                Remove Showtime
+              </button>
+            )}
+          </div>
+        ))}
+
+        {mode === "add" ? (
+          <div className="flex items-center justify-around pt-10">
+            <button
+              type="submit"
+              className="bg-neon text-black py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110"
+            >
+              ADD THEATRE
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-around gap-3 pt-10">
+            <button
+              type="submit"
+              className="bg-neon text-black py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110"
+              onClick={updateTheater}
+            >
+              UPDATE
+            </button>
+            <button
+              type="submit"
+              className="bg-black border-2 border-neon text-neon py-2 px-5 font-bold rounded-md transition duration-150 ease-in-out hover:scale-110"
+              onClick={deleteTheater}
+            >
+              DELETE
+            </button>
+          </div>
+        )}
+      </form>
+    </div>
+  );
 };
 
 export default TheatresSidebar;
