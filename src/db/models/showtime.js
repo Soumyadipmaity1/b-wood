@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const showtime = new mongoose.Schema({
-    startAt:{type:Date},
+    startAt:{type:String},
     endAt:{type:Date},
     available_seats:[{type:String}],
     price:{type:Number},

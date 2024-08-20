@@ -116,3 +116,14 @@ export const deleteMoviebyId = async (data) => {
     console.error(error);
   }
 };
+
+export const getAllMovieIds=async()=>{
+  try {
+    const movies = await Movie.find({}, '_id title'); // Retrieve both _id and title fields
+    const movieData = movies.map(movie => ({ id: movie._id, title: movie.title })); // Map to an array of objects with id and title
+    console.log(movieData);
+    return movieData;
+  } catch (error) {
+    console.log(error);
+  }
+}

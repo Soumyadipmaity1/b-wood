@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import TimeInput from "./TimeInput";
 import { deleteMoviebyId, getCastById, getMoviebyId, newMovie, updateMoviebyId } from "../../../actions/movie";
-import { redirect } from "next/navigation";
 
 const MoviesSidebar = ({ isOpen, onClose, mode , movieId}) => {
   const [formData, setFormData] = useState({
@@ -25,10 +24,10 @@ const MoviesSidebar = ({ isOpen, onClose, mode , movieId}) => {
   useEffect(() => {
     const fetchData = async () => {
       let castIds = [];
-      if (movieId) {
+      if (movieId && mode==='edit') {
         try {
           const res = await getMoviebyId(movieId);
-          console.log(res);  
+          console.log(res);
           setFormData({
             title: res.title,
             poster: res.images,
