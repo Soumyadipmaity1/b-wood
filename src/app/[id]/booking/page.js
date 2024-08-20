@@ -1,6 +1,9 @@
+"use client"
 import React from "react";
 
-function Booking() {
+function Booking({params}) {
+  const {id}=params;
+  console.log(id);
   return <div>Booking</div>;
 }
 

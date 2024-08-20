@@ -27,10 +27,10 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/app/movies/booking/ticket/payment/page.js",
-    "src/app/movies/booking/ticket/page.js",
-    "src/app/movies/booking/page.js",
-    "src/app/movies/page.js"
+    "src/app/[id]/booking/ticket/payment/page.js",
+    "src/app/[id]/booking/ticket/page.js",
+    "src/app/[id]/booking/page.js",
+    "src/app/[id]/page.js"
   ],
   "exclude": [
     "node_modules"
