@@ -8,11 +8,13 @@ import { FaPlusCircle } from "react-icons/fa";
 import MoviesSidebar from "../../components/adminComponents/Movies/MoviesSidebar";
 import UsersSidebar from "../../components/adminComponents/Users/UsersSidebar";
 import TheatresSidebar from "../../components/adminComponents/Theatres/TheatresSidebar";
+import ReservationsSidebar from "../../components/adminComponents/Reservations/ReservationsSidebar";
 
 function Admin() {
   const [isMoviesSidebarOpen, setMoviesSidebarOpen] = useState(false);
   const [isUsersSidebarOpen, setUsersSidebarOpen] = useState(false);
   const [isTheatresSidebarOpen, setTheatresSidebarOpen] = useState(false);
+  const[isReservationsSidebarOpen,setReservationsSidebarOpen] = useState(false);
   const [sidebarMode, setSidebarMode] = useState("add");
   const [movieId, setMovieId] = useState("");
   const [theaterId, setTheaterId] = useState("");
@@ -44,6 +46,14 @@ function Admin() {
     setTheatresSidebarOpen(true);
   };
 
+  const handleOpenReservationsSidebar=(mode)=>{
+    setMoviesSidebarOpen(false);
+    setUsersSidebarOpen(false);
+    setTheatresSidebarOpen(false);
+    setSidebarMode(mode);
+    setReservationsSidebarOpen(true);
+  }
+
   const handleCloseMoviesSidebar = () => {
     setMoviesSidebarOpen(false);
   };
@@ -55,6 +65,10 @@ function Admin() {
   const handleCloseTheatresSidebar = () => {
     setTheatresSidebarOpen(false);
   };
+
+  const handleCloseReservationsSidebar=()=>{
+    setReservationsSidebarOpen(false);
+  }
 
   return (
     <main className="px-4 lg:px-10 pt-36 lg:pt-20 flex flex-col gap-10">
