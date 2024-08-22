@@ -22,9 +22,8 @@ const Card = ({ name, email, role, phone, onClick }) => {
   );
 };
 
-const AdminUsers = () => {
+const AdminUsers = ({onOpenSidebar}) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -41,15 +40,8 @@ const AdminUsers = () => {
     fetchUsers();
   }, []);
 
-  const handleCardClick = async (email,id) => {
+  const handleCardClick = async (id) => {
     onOpenSidebar(id)
-    try {
-      const userData = await getUser(email); // Fetch the user data by email
-      setSelectedUser(userData);
-      setSidebarOpen(true); // Open the sidebar with the fetched data
-    } catch (error) {
-      console.error('Error fetching user:', error);
-    }
   };
 
   const handleSidebarClose = () => {
@@ -68,12 +60,12 @@ const AdminUsers = () => {
               email={user.email}
               role={user.role}
               phone={user.phone}
-              onClick={() => handleCardClick(user.email,user.id)} // Pass email to fetch user
+              onClick={() => handleCardClick(user._id)} // Pass email to fetch user
             />
           ))}
         </div>
       </div>
-      <UsersSidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} user={selectedUser} />
+      <UsersSidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} />
     </>
   );
 }

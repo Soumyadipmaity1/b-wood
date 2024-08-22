@@ -17,7 +17,7 @@ export const getUser = async () => {
 export const getUserById = async (id) => {
     await connectDB();
     try {
-        const user = await User.findById(id);
+        const user = await User.findById(id).lean();
         if (!user) {
             throw new Error("User not found");
         }
@@ -44,7 +44,7 @@ export const createUser = async (data) => {
 export const updateUser = async (id, data) => {
     await connectDB();
     try {
-        const user = await User.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+        const user = await User.findByIdAndUpdate(id, data, { new: true, runValidators: true }).lean();
         if (!user) {
             throw new Error("User not found");
         }
