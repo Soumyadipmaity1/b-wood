@@ -25,6 +25,7 @@ const SeatSelection = () => {
   return (
     <div className=" text-white  md:mt-10 mt-5 justify-center lg:gap-40 lg:flex-row lg:flex flex flex-col">
      <div className='flex-col flex '>
+    <div className='w-64 h-24 mb-14 border-lime-500 border text-black font-bold bg-gray-400 items-center flex justify-center mx-auto'> Screen </div>
      <div className=" mx-auto grid grid-cols-10  sm:gap-4 text-sm sm:text-base gap-2 md:justify-center">
         {rows.map((row) =>
           Array.from({ length: seatsPerRow }).map((_, index) => {
