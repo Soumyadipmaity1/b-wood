@@ -34,22 +34,20 @@ const Slider = () => {
   };
 
   return (
-    <div className="relative xl:max-w-7xl w-full lg:max-w-6xl mt-24 mx-auto">
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity z-10"></div>
+    <div className="relative w-full xl:max-w-7xl lg:max-w-6xl mt-24 lg:mt-32 mx-auto">
+      <div className="relative h-full overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-30 lg:opacity-50 z-10"></div>
         <div
           className="flex transition-transform duration-500"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {images.map((src, index) => (
-            <div key={index} className="w-full sm:h-[500px] flex-shrink-0">
+            <div key={index} className="flex items-stretch justify-stretch w-full max-h-80 border-2 rounded-sm lg:max-h-[33rem] flex-shrink-0">
               <Image
                 src={src}
                 alt={`Slide ${index}`}
-                width={500}
-                height={300}
                 layout="responsive"
-                className='sm:h-[500px] w-full '
+                className='w-full h-full'
               />
             </div>
           ))}
@@ -57,7 +55,7 @@ const Slider = () => {
       </div>
       <button
         onClick={prevSlide}
-        className="absolute hidden sm:block top-1/2 left-0 transform -translate-y-1/2 bg-white/50 hover:bg-white/70 p-2 rounded-full shadow-md z-20 transition-all duration-300"
+        className="absolute block top-1/2 left-4 lg:left-6 transform -translate-y-1/2 bg-white/50 hover:bg-white/70 backdrop-blur-lg p-1 lg:p-2 rounded-full shadow-md z-20 transition-all duration-150"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +69,7 @@ const Slider = () => {
       </button>
       <button
         onClick={nextSlide}
-        className="absolute hidden sm:block top-1/2 right-0 transform -translate-y-1/2 bg-white/50 hover:bg-white/70 p-2 rounded-full shadow-md z-20 transition-all duration-300"
+        className="absolute block top-1/2 right-4 lg:right-6 transform -translate-y-1/2 bg-white/50 hover:bg-white/70 p-1 lg:p-2 rounded-full shadow-md z-20 transition-all duration-150"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
