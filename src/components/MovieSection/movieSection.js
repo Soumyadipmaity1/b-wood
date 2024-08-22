@@ -39,7 +39,7 @@ export default function MovieDetails() {
             </div>
             <p className='mb-3' ><span  className='px-2 py-0.6 bg-lime-200 text-black rounded-sm mr-1 '>Hindi</span> <span className='mr-1 px-2 py-0.6 bg-lime-200 text-black rounded-sm'>3D</span> <span className=' px-2 py-0.6 bg-lime-200 text-black rounded-sm'>2D</span></p>
             <p className='mt-4'>{movie.duration } • {movie.genres} • {movie.certification } • {movie.releaseDate }</p>
-          <Link href="/movies/booking" >  <button  className="bg-[#00ff00] text-black sm:px-6 px-16 sm:py-2 py-3 mt-8 sm:text-lg text-xl font-semibold rounded transition-transform transform hover:bg-[#00cc00] hover:scale-105">
+          <Link href="/movies/booking/" >  <button  className="bg-[#00ff00] text-black sm:px-6 px-16 sm:py-2 py-3 mt-8 sm:text-lg text-xl font-semibold rounded transition-transform transform hover:bg-[#00cc00] hover:scale-105">
               Book tickets
             </button></Link>
           </div>
