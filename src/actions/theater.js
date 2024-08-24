@@ -101,13 +101,35 @@ export const updateTheaterById = async (id, data) => {
       name: data.get('name'),
       city: data.get('city'),
       image: data.get('image'),
-    
+      // movieId:movieId,
     };
     console.log(updatedData);
-    const res = await Theater.findByIdAndUpdate(id, updatedData, { new: true }).lean();
-    return res;
+    // const res = await Theater.findByIdAndUpdate(id, updatedData, { new: true }).lean();
+    // return res;
   } catch (error) {
     console.log(error);
     // throw error;  // Re-throw the error to handle it in the caller function if needed
   }
 };
+
+export const updateShowtime=async(data)=>{
+  await connectDB()
+try {
+  console.log(data);
+  const newShowtimes = await Promise.all(data.map(async (item) => {
+    const {_id}=item
+      const showtime = {
+          startAt: item.startAt,
+          endAt: item.endAt,
+          price: item.price,
+          movieId: item.moviesId,
+      }
+      const res=await Showtime.findByIdAndUpdate(_id,showtime,{new:true}).lean();
+      return res;
+    }));
+    console.log(newShowtimes);
+    return newShowtimes;
+}catch(error){
+  console.log(error);
+}
+}
