@@ -9,7 +9,7 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
-        setNavbarBg('backdrop-blur-sm bg-black/50 bg-opacity-50');
+        setNavbarBg('backdrop-blur-xl bg-black bg-opacity-80');
       } else {
         setNavbarBg('bg-transparent');
       }
@@ -22,8 +22,8 @@ const Navbar = () => {
 
 
   return (
-    <nav className={`fixed top-3 lg:top-4 left-0 right-0 w-full lg:w-[95%] mx-auto ${navbarBg} backdrop-blur-md border-[1px] border-neon rounded-full lg:border-[1.5px] lg:border-neon lg:rounded-full transition-all duration-300 z-50`}>
-      <div className="flex justify-between items-center p-3 px-4 lg:p-4 lg:px-14 mx-auto">
+    <nav className={`fixed top-3 lg:top-4 left-0 right-0 w-full lg:w-[95%] mx-auto ${navbarBg} backdrop-blur-lg border-[1px] border-neon rounded-xl lg:border-[2px] lg:border-neon transition-all duration-300 z-50`}>
+      <div className="flex justify-between items-center py-4 px-4 lg:p-4 lg:px-14 mx-auto">
         <div>
           <Link href="/" className="hidden lg:flex items-center text-lime-500 font-bold text-2xl">
             B-Wood

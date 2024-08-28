@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
-import {createShowtime, createTheater, deleteTheaterBy, getShowtimeBytheaterId, getTheaterById, updateTheaterById}from '../../../actions/theater.js'
+import {createShowtime, createTheater, deleteTheaterBy, getShowtimeBytheaterId, getTheaterById, updateShowtime, updateTheaterById}from '../../../actions/theater.js'
 import { getAllMovieIds } from "../../../actions/movie.js";
 
 const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
@@ -9,12 +9,14 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
     name: "",
     city: "",
     image: null,
-    moviesId: "",
+    movieIds: [],
   });
   const [showtimes, setShowtimes] = useState([
-    { startAt: "", endAt: "", price: 0, moviesId: "" ,theatreId:""},
+    { startAt: "", endAt: "", price: 0, movieId: "" ,theatreId:"",isNew:true},
   ]);
   const [moviesList, setMoviesList] = useState([]);
+  const [existingMovieIds, setExistingMovieIds] = useState([]); // To store existing movie IDs
+
   let movieId=[]
   useEffect(() => {
     const fetchMovies = async () => {
@@ -32,22 +34,27 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
             name:res.name,
             city:res.city,
             image:res.image,
+            movieIds:res.movieId
           })
-          movieId=res.movieId
+          setExistingMovieIds(res.movieId || []);
         }
         const showres=await getShowtimeBytheaterId(theaterId);
         console.log(showres)
         if(showres){
-          setShowtimes(showres);
+          setShowtimes(showres.map(show=>({
+            ...show,
+            isNew:false
+          })));
         }
         if(mode==='add'){
           setTheatre({
             name:"",
             city:"",
             image:null,
+            movieIds:[]
           })
           setShowtimes(
-            { startAt: "", endAt: "", price: 0, moviesId: "" ,theatreId:""},
+            { startAt: "", endAt: "", price: 0, movieId: "" ,theatreId:""},
           )
         }
       }
@@ -64,6 +71,18 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
     setTheatre((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleMovieSelect = (event) => {
+    const selectedMovieId = event.target.value;
+    setTheatre((prev) => {
+      let updatedMovieIds = [...prev.movieIds];
+      if (!updatedMovieIds.includes(selectedMovieId)) {
+        updatedMovieIds.push(selectedMovieId);
+      }
+      return { ...prev, movieIds: updatedMovieIds };
+    });
+  };
+
+
   const handleShowtimeChange = (index, event) => {
     const { name, value } = event.target;
     const updatedShowtimes = [...showtimes];
@@ -78,7 +97,7 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
   const addShowtime = () => {
     setShowtimes([
       ...showtimes,
-      { startAt: "", endAt: "", price: "", moviesId: "" },
+      { startAt: "", endAt: "", price: "", movieId: "",isNew:true },
     ]);
   };
 
@@ -111,7 +130,7 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
       }
       data.append('name',theatre.name)
       data.append('city',theatre.city)
-      data.append('movieId',theatre.moviesId);
+      data.append('movieId',JSON.stringify(theatre.movieIds));
       const newTheater=await createTheater(data);
       console.log(newTheater);
       const{_id}=newTheater
@@ -122,9 +141,6 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
 
   const updateTheater=async()=>{
     try {
-      if (!movieId.find(id => id === theatre.moviesId)) {
-        movieId.push(theatre.moviesId);
-      }
       const data=new FormData();
       if(theatre.image){
         const baseImage=await fileToBase64(theatre.image);
@@ -132,9 +148,23 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
       }
       data.append('name',theatre.name)
       data.append('city',theatre.city)
-      // data.append('movieId',movieId);
+      data.append('movieId',JSON.stringify(theatre.movieIds));
+      console.log(theatre.movieIds)
+      
       const res=await updateTheaterById(theaterId,data);
-      console.log(res);
+      console.log(res)
+      const newShowtimes=showtimes.filter(show=>show.isNew);
+      const oldShowtimes=showtimes.filter(show=>!show.isNew);
+      console.log(newShowtimes)
+      console.log(oldShowtimes);
+      if(newShowtimes.length>0){
+        const res=await createShowtime(newShowtimes,theaterId);
+        console.log(res);
+      }
+      if(oldShowtimes.length>0){
+        const res= await updateShowtime(oldShowtimes);
+        console.log(res);
+      }
     } catch (error) {
       console.log(error)
     }
@@ -199,8 +229,8 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
           <label className="text-neon font-semibold">MoviesId</label>
           <select
             name="moviesId"
-            value={theatre.moviesId}
-            onChange={handleTheatreChange}
+            value={theatre.movieIds[0]}
+            onChange={handleMovieSelect}
             className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
           >
             <option value="">Select a Movie</option>
@@ -254,7 +284,7 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
 
             <label className="text-neon font-semibold">MoviesId</label>
             <select
-              name="moviesId"
+              name="movieId"
               value={showtime.movieId}
               onChange={(e) => handleShowtimeChange(index, e)}
               className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
