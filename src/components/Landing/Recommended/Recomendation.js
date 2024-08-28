@@ -35,7 +35,6 @@ const Home = () => {
         console.error("Error fetching movies:", error);
       }
     };
-
     fetchMovies();
   }, []);
 
