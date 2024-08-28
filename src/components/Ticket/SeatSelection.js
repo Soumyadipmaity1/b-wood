@@ -2,14 +2,22 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import {order} from '../../actions/razorpay.js'
+import RenderRazorpay from './RenderRazorpay.js'
 const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 const seatsPerRow = 10;
-const seatPrice = 200;
+// const seatPrice = 200;
 
-const SeatSelection = () => {
+const SeatSelection = ({showtime}) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const [bookedSeats] = useState(['C4', 'D5', 'E6']); // booked seats
-
+  const [bookedSeats] = useState([]); // booked seats
+  const [orderDetails, setOrderDetails] = useState({
+    orderId: null,
+    currency: null,
+    amount: null,
+   });
+   const [displayRazorpay, setDisplayRazorpay] = useState(false);
+  let seatPrice=showtime.price || 200
   const handleSeatClick = (seat) => {
     if (bookedSeats.includes(seat)) return; 
 
@@ -19,10 +27,26 @@ const SeatSelection = () => {
       setSelectedSeats([...selectedSeats, seat]);
     }
   };
-
+  const handleSubmit=async(amount)=>{
+    try {
+      const res=await order(amount)
+      if(res && res.id){
+        setOrderDetails({
+          orderId: res.id,
+          amount: res.amount,
+        })
+      }
+      setDisplayRazorpay(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const totalAmount = selectedSeats.length * seatPrice;
+  
+
 
   return (
+    <>
     <div className=" text-white  md:mt-10 mt-5 justify-center lg:gap-40 lg:flex-row lg:flex flex flex-col">
      <div className='flex-col flex '>
     <div className='w-64 h-24 mb-14 border-lime-500 border text-black font-bold bg-gray-400 items-center flex justify-center mx-auto'> Screen </div>
@@ -68,15 +92,26 @@ const SeatSelection = () => {
 
      </div>
       <div className="flex justify-center lg:mt-0 mt-5 items-center">
-      <Link href="/movies/booking/ticket/payment" > 
+
       <button
         className="bg-[#00ff00] hover:bg-lime-600 cursor-pointer text-black font-bold py-2 xl:h-14 lg:h-16 h-14 xl:px-20 lg:px-10 px-20 rounded-lg"
           disabled={totalAmount === 0}
+          onClick={()=>handleSubmit(totalAmount)}
         >
           {totalAmount > 0 ? `Pay ${totalAmount} INR` : 'Book Ticket'}
-        </button> </Link>
+        </button>
       </div>
     </div>
+    {displayRazorpay && (
+      <RenderRazorpay 
+      amount={orderDetails.amount}
+      orderId={orderDetails.orderId}
+      keyId={'rzp_test_hAi2jfp9hhWAbU'}
+      keySecret={'q59gkQSAD7qKyu8Lis1YecuM'}
+      showtime={showtime}
+      ></RenderRazorpay>
+    )}
+    </>
   );
 };
 

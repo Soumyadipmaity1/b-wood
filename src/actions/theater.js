@@ -3,6 +3,7 @@ import connectDB from "../db/database.js";
 import Theater from "../db/models/theater.js";
 import mongoose from "mongoose"; // Ensure mongoose is imported
 import Showtime from "../db/models/showtime.js"
+import Movie from "../db/models/movie.js";
 
 export const createTheater = async (data) => {
   await connectDB();
@@ -63,12 +64,41 @@ export const getAllTheater=async()=>{
 export const getTheaterById=async(id)=>{
   await connectDB();
   try {
+    // console.log(id);
     const res=await Theater.findById(id).lean();
     return res;
   } catch (error) {
     console.log(error);
   }
 }
+export const getTheaterByMovieId = async (id) => {
+  await connectDB();
+  try {
+    // console.log(id)
+    const res = await Theater.find({ movieId: { $in: [id] } }).lean();
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getShowtimeByTheaterAndMovieId = async (theaterId, movieId) => {
+  await connectDB(); // Ensure your database connection is established
+  try {
+    // Find showtimes based on both theaterId and movieId
+    const res = await Showtime.find({
+      theaterId: theaterId,
+      movieId: movieId,
+    }).lean();
+    
+    return res; // Return the result of showtimes
+  } catch (error) {
+    console.log(error);
+    return []; // Return an empty array in case of error
+  }
+};
+
+
 
 export const getShowtimeBytheaterId=async(id)=>{
   await connectDB();
@@ -79,6 +109,19 @@ export const getShowtimeBytheaterId=async(id)=>{
     console.log(error);
   }
 }
+
+
+export const getShowTimeById=async (id)=>{
+  await connectDB();
+  try {
+    const res=await Showtime.findById(id).populate('movieId').populate('theaterId').lean();
+
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 export const deleteTheaterBy=async(id)=>{
   await connectDB();

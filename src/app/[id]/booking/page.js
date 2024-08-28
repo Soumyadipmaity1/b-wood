@@ -7,7 +7,7 @@ import OfferCard from '../../../components/Booking/OfferCard';
 
 function Booking({params}) {
   const {id}=params;
-  console.log(id);
+  // console.log(id);
     const [location, setLocation] = useState('');
 
     const handleLocationSelect = (selectedLocation) => {
@@ -24,7 +24,7 @@ function Booking({params}) {
             <div className="container mx-auto">
                 <DateSelector />
                 <div className="flex justify-between mt-8">
-                    <TheatreList location={location} />
+                    <TheatreList location={location} id={id} />
                     <OfferCard />
                 </div>
             </div>

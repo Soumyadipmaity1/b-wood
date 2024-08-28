@@ -27,8 +27,8 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/app/[id]/booking/ticket/payment/page.js",
-    "src/app/[id]/booking/ticket/page.js",
+    "src/app/[id]/booking/[sid]/payment/page.js",
+    "src/app/[id]/booking/[sid]/page.js",
     "src/app/[id]/booking/page.js",
     "src/app/[id]/page.js"
   ],
