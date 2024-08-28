@@ -19,9 +19,10 @@ const loadScript = (src) =>
     document.body.appendChild(script);
   });
 
-const RenderRazorpay = ({ orderId, keyId, keySecret, amount,showtime}) => {
+const RenderRazorpay = ({ orderId, keyId, keySecret, amount,showtime,selectedSeats}) => {
   const paymentId = useRef(null);
   const paymentMethod = useRef(null);
+  console.log(showtime,selectedSeats)
   // To load razorpay checkout modal script.
   const displayRazorpay = async (options) => {
     const res = await loadScript(
@@ -52,7 +53,7 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount,showtime}) => {
   // informing server about payment
   const handlePayment = async (status, orderDetails) => {
     console.log(status, orderDetails)
-    const res=await createPayment(status,orderDetails)
+    const res=await createPayment(status,orderDetails,showtime,selectedSeats,amount)
     // console.log(res)
   };
 

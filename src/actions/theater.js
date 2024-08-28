@@ -34,17 +34,19 @@ export const createShowtime=async(data,id)=>{
   try {
     console.log(data);
     const newShowtimes = await Promise.all(data.map(async (item) => {
+      console.log("this is item ",item)
         const showtime = new Showtime({
             startAt: item.startAt,
             endAt: item.endAt,
             price: item.price,
             theaterId: id,
-            movieId: item.moviesId,
+            movieId: item.movieId,
         });
+        console.log("this is showtime ",showtime)
         const res = await showtime.save();
         return res;
       }));
-      console.log(newShowtimes);
+      // console.log(newShowtimes);
       return newShowtimes;
   }catch(error){
     console.log(error);
@@ -136,19 +138,23 @@ export const deleteTheaterBy=async(id)=>{
 export const updateTheaterById = async (id, data) => {
   await connectDB();
   try {
-    const movieId = data.get('movieId')
-      ? data.get('movieId').map(id => new mongoose.Types.ObjectId(id))
-      : undefined;
-  
+    // Convert movieId JSON string to an array
+    const movieIds = JSON.parse(data.get('movieId') || '[]');
+
+    // Convert each movieId to a Mongoose ObjectId
+    const movieObjectIds = movieIds.map((movieId) => new mongoose.Types.ObjectId(movieId));
+
     const updatedData = {
       name: data.get('name'),
       city: data.get('city'),
       image: data.get('image'),
-      // movieId:movieId,
+      movieId: movieObjectIds, // Use converted ObjectId array
     };
+
     console.log(updatedData);
-    // const res = await Theater.findByIdAndUpdate(id, updatedData, { new: true }).lean();
-    // return res;
+
+    const res = await Theater.findByIdAndUpdate(id, updatedData, { new: true }).lean();
+    return res;
   } catch (error) {
     console.log(error);
     // throw error;  // Re-throw the error to handle it in the caller function if needed

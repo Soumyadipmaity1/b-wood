@@ -1,6 +1,7 @@
 "use server"
 import Razorpay from 'razorpay'
-
+import Reservation from '../db/models/reservation.js'
+import Showtime from '../db/models/showtime'
 
 
 export const order=async(amount)=>{
@@ -22,9 +23,21 @@ export const order=async(amount)=>{
     }
 }
 
-export const createPayment=async()=>{
+export const createPayment=async(status,orderDetails,showtime,selectedSeats,amount)=>{
     try {
         console.log("this is payment gateway")
+        const {_id}=showtime;
+        const reserve=new Reservation({
+            showtimeId:_id,
+            amount:amount,
+            orderId:orderDetails.orderId,
+        })
+        
+        await reserve.save()
+        const res=await Showtime.findByIdAndUpdate(_id, {
+            $addToSet: { reserved_seats: { $each: selectedSeats } },
+        },{new:true});
+        console.log("updated showtime ",res);
     } catch (error) {
         console.log(error)
     }
