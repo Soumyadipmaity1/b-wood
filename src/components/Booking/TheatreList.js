@@ -7,7 +7,7 @@ const theatres = [
 
 const TheatreList = ({ location }) => {
     return (
-        <div className="bg-black p-6 w-2/3 text-neon border-[1px] border-white rounded-md">
+        <div className="bg-black p-6 w-full lg:w-2/3 text-neon border-[1px] border-white rounded-md">
             <h2 className="text-white text-lg flex items-center pb-4 font-bold tracking-wide">
                 Theatres in your Area
             </h2>
