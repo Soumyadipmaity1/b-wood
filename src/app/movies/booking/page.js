@@ -13,9 +13,9 @@ const Booking = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white mt-32 px-10">
-            <div className='flex items-center justify-between'>
-                <h1 className='text-4xl font-bold tracking-wide'>Deadpool and Wolverine</h1>
+        <div className="h-full lg:min-h-screen bg-black text-white mt-32 px-3 lg:px-10">
+            <div className='flex items-center justify-between flex-col lg:flex-row gap-10 lg:gap-0'>
+                <h1 className='text-4xl font-bold tracking-wide text-center'>Deadpool and Wolverine</h1>
                 <LocationSelector onSelectLocation={handleLocationSelect} />
             </div>
             <hr className='w-full my-8 border-0 bg-neon h-[1px]' />
