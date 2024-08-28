@@ -1,6 +1,6 @@
-import Recommended from "../components/Landing/Recommended/Recomendation"
-import WhyChooseSection from "../components/Landing/WhyChoose"
-import Slider from "../components/Landing/Slider"
+import Recommended from "../components/Landing/Recommended/Recomendation";
+import WhyChooseSection from "../components/Landing/WhyChoose";
+import Slider from "../components/Landing/Slider";
 export default function Home() {
   return (
     <main className="w-full lg:px-10">

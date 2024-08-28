@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-const TimeInput = () => {
-  const [time, setTime] = useState({ hours: '', minutes: '', seconds: '' });
+const TimeInput = ({time,setTime}) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
