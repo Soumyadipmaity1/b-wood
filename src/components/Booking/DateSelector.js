@@ -27,7 +27,7 @@ const DateSelector = () => {
     };
 
     return (
-        <div className="flex items-center justify-center bg-black text-neon">
+        <div className="flex items-center justify-center bg-black text-neon w-full">
             <button onClick={scrollLeft} className="p-2">
                 <FaChevronLeft className='size-9 text-neon bg-gray-800 hover:bg-gray-700 transition duration-200 ease-in-out rounded-full p-2' />
             </button>
