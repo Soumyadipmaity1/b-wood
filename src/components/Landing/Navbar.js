@@ -25,7 +25,8 @@ const Navbar = () => {
     <nav className={`fixed top-3 lg:top-4 left-0 right-0 w-full lg:w-[95%] mx-auto ${navbarBg} backdrop-blur-lg border-[1px] border-neon rounded-xl lg:border-[1.5px] lg:border-neon transition-all duration-300 z-50`}>
       <div className="flex justify-between items-center py-4 px-4 lg:p-4 lg:px-14 mx-auto">
         <div>
-          <Link href="/" className="hidden lg:flex items-center text-lime-500 font-bold text-2xl">
+          <Link href="/" className="hidden lg:flex gap-4 items-center justify-center text-lime-500 font-bold text-2xl">
+            <img src='/logo.png' alt="logo" className="size-14 rounded-full" />
             B-Wood
           </Link>
           <Link href="/" className="flex items-center lg:hidden text-lime-500 font-bold text-xl">
@@ -64,7 +65,7 @@ const Navbar = () => {
               />
             </svg>
           </Link>
-          
+
         </div>
       </div>
     </nav>

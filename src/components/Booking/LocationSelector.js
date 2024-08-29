@@ -16,9 +16,9 @@ const LocationSelector = ({ onSelectLocation }) => {
             try {
                 const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
                 const data = await response.json();
-                const location = data.display_name;
-                setInputValue(location);
-                onSelectLocation(location);
+                const city = data.address?.city || data.address?.town || data.address?.village || data.address?.hamlet || ''; // Extract city name
+                setInputValue(city);
+                onSelectLocation(city);
             } catch (error) {
                 console.error("Error fetching current location:", error);
             }
@@ -51,9 +51,14 @@ const LocationSelector = ({ onSelectLocation }) => {
         try {
             const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=5`);
             const data = await response.json();
-            const locations = data.map(item => item.display_name);
+            const locations = data
+                .map(item => {
+                    const city = item.address?.city || item.address?.town || item.address?.village || item.address?.hamlet || ''; // Extract city name
+                    return city;
+                })
+                .filter(city => city); // Remove empty strings
             setSuggestions(locations);
-            setShowSuggestions(true);
+            setShowSuggestions(locations.length > 0);
         } catch (error) {
             console.error("Error fetching location suggestions:", error);
         }
