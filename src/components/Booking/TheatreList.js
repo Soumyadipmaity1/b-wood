@@ -42,10 +42,10 @@ const TheatreList = ({ location, id }) => {
   return (
     <div className="bg-black p-6 w-full lg:w-2/3 text-neon border-[1px] border-white rounded-md">
       <h2 className="text-white text-lg flex items-center pb-4 font-bold tracking-wide">
-        Theatres in your Area
+        Theatres in { location }
       </h2>
       <hr className="w-full mb-8 border-0 h-[2px] bg-white" />
-      <div className="h-40 overflow-y-auto">
+      <div className="h-72 overflow-y-auto">
         {theaters.map((theatre, index) => (
           <div key={index} className="mb-4 border-2 p-4 rounded-md">
             <div className="text-white mb-2">{theatre.name}</div>

@@ -29,8 +29,9 @@ const Navbar = () => {
             <img src='/logo.png' alt="logo" className="size-14 rounded-full" />
             B-Wood
           </Link>
-          <Link href="/" className="flex items-center lg:hidden text-lime-500 font-bold text-xl">
-            BW
+          <Link href="/" className="flex items-center justify-center gap-2 lg:hidden text-lime-500 font-bold text-[0.85rem]">
+            <img src='/logo.png' alt="logo" className="size-7 rounded-full" />
+            B-Wood
           </Link>
         </div>
         <div className='flex lg:gap-8'>
@@ -38,7 +39,7 @@ const Navbar = () => {
             <input
               type="text"
               placeholder="Search..."
-              className="lg:w-96 w-40 px-2 pl-3 py-1 lg:px-4 lg:py-2 text-sm lg:text-lg rounded-full bg-gray-800 text-white placeholder-gray-400"
+              className="lg:w-96 w-36 px-2 pl-3 py-1 lg:px-4 lg:py-2 text-sm lg:text-lg rounded-full bg-gray-800 text-white placeholder-gray-400"
             />
           </div>
 

@@ -29,7 +29,7 @@ const DateSelector = () => {
     return (
         <div className="flex items-center justify-center bg-black text-neon w-full">
             <button onClick={scrollLeft} className="p-2">
-                <FaChevronLeft className='size-9 text-neon bg-gray-800 hover:bg-gray-700 transition duration-200 ease-in-out rounded-full p-2' />
+                <FaChevronLeft className='size-7 lg:size-9 text-neon bg-gray-800 hover:bg-gray-700 transition duration-200 ease-in-out rounded-full p-2' />
             </button>
             <div ref={scrollRef} className="flex items-center justify-start overflow-hidden overflow-x-scroll gap-4 px-5 py-2 scrollbar-hidden">
                 {dates.map((date, index) => (
@@ -39,7 +39,7 @@ const DateSelector = () => {
                 ))}
             </div>
             <button onClick={scrollRight} className="p-2">
-                <FaChevronRight className='size-9 text-neon bg-gray-800 hover:bg-gray-700 transition duration-200 ease-in-out rounded-full p-2' />
+                <FaChevronRight className='size-7 lg:size-9 text-neon bg-gray-800 hover:bg-gray-700 transition duration-200 ease-in-out rounded-full p-2' />
             </button>
         </div>
     );

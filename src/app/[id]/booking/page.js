@@ -15,15 +15,15 @@ function Booking({params}) {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white mt-32 px-10">
-            <div className='flex items-center justify-between'>
-                <h1 className='text-4xl font-bold tracking-wide'>Deadpool and Wolverine</h1>
+        <div className="h-full w-full lg:min-h-screen bg-black text-white mt-28 lg:mt-36 lg:px-10">
+            <div className='w-full flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-0'>
+                <h1 className='text-4xl font-bold tracking-wide text-center'>Deadpool and Wolverine</h1>
                 <LocationSelector onSelectLocation={handleLocationSelect} />
             </div>
-            <hr className='w-full my-8 border-0 bg-neon h-[1px]' />
+            <hr className='w-11/12 my-8 mx-auto border-0 bg-neon h-[1px]' />
             <div className="container mx-auto">
                 <DateSelector />
-                <div className="flex justify-between mt-8">
+                <div className="flex justify-between mt-8 mx-2">
                     <TheatreList location={location} id={id} />
                     <OfferCard />
                 </div>

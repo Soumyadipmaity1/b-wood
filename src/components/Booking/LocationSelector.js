@@ -6,9 +6,9 @@ const LocationSelector = ({ onSelectLocation }) => {
     const [inputValue, setInputValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [locationSelected, setLocationSelected] = useState(false); // State to track if a location is selected
+    const [locationSelected, setLocationSelected] = useState(false);
     const inputRef = useRef(null);
-    const containerRef = useRef(null); // Reference to the container element
+    const containerRef = useRef(null);
 
     useEffect(() => {
         if (!locationSelected) { // Only fetch the live location if no location is selected
