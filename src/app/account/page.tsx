@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export default function Profile() {
   const [user, setUser] = useState({
-    image: "", // Initially vacant
+    image: "", 
     name: "John Doe",
     username: "johndoe",
     email: "johndoe@example.com",
