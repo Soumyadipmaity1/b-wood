@@ -13,7 +13,7 @@ export default function SignUp() {
               id="email"
               type="email"
               placeholder="Enter your email"
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full p-2 border text-black border-gray-300 rounded-lg"
             />
           </div>
           <div className="mb-4">
@@ -24,7 +24,7 @@ export default function SignUp() {
               id="password"
               type="password"
               placeholder="Create a password"
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full p-2 border text-black border-gray-300 rounded-lg"
             />
           </div>
           <button
