@@ -14,7 +14,7 @@ export default function Login() {
               id="username"
               type="username"
               placeholder="Enter your Username"
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full p-2 border text-black  border-gray-300 rounded-lg"
             />
           </div>
           <div className="mb-4">
@@ -25,7 +25,7 @@ export default function Login() {
               id="email"
               type="email"
               placeholder="Enter your email"
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full p-2 border text-black  border-gray-300 rounded-lg"
             />
           </div>
           <div className="mb-4">
@@ -36,7 +36,7 @@ export default function Login() {
               id="password"
               type="password"
               placeholder="Enter your password"
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full p-2 border  text-black border-gray-300 rounded-lg"
             />
           </div>
           <button
