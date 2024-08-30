@@ -7,7 +7,7 @@ import { getMovies } from "../../../actions/movie.js";
 const Card = ({ title, poster, id }) => {
   return (
     <Link href={`/${id}`}>
-      <div className="relative border-2 ml-4 w-60 cursor-pointer text-center border-neon rounded-xl shadow-lg flex flex-col justify-center p-2 transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-opacity-80">
+      <div className="relative border-2 ml-6 w-60 cursor-pointer text-center border-neon rounded-xl shadow-lg flex flex-col justify-center p-2 transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-opacity-80">
         <div className="relative h-80 w-full rounded-md mb-4 overflow-hidden">
           <Image
             src={poster}
