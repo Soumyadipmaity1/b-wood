@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { createPayment, sendEmail } from "../../actions/razorpay";
 import crypto from 'crypto-js';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { auth } from "../../firebase/firebase";
 
 const loadScript = (src) =>
@@ -11,12 +11,26 @@ const loadScript = (src) =>
     script.onload = () => {
       console.log("Razorpay loaded successfully");
       resolve(true);
+      // Remove the script element from the DOM after it loads.
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
     };
     script.onerror = () => {
       console.log("Error in loading Razorpay");
       resolve(false);
+      // Remove the script element from the DOM if an error occurs.
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
     };
-    document.body.appendChild(script);
+    // Only append the script if document.body is not null
+    if (document.body) {
+      document.body.appendChild(script);
+    } else {
+      console.error("document.body is null. Cannot append Razorpay script.");
+      resolve(false);
+    }
   });
 
 const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedSeats }) => {
@@ -24,6 +38,7 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
   const paymentMethod = useRef(null);
   const router = useRouter();
   const isMounted = useRef(true);
+  const id=showtime.movieId._id
 
   useEffect(() => {
     return () => {
@@ -31,30 +46,14 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
     };
   }, []);
 
-  // Function to send the email with payment details
-  // const sendEmail = async (email, details) => {
-  //   try {
-  //     const response = await fetch('/api/sendEmail', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ email, details }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error('Failed to send email');
-  //     }
-
-  //     console.log('Email sent successfully');
-  //   } catch (error) {
-  //     console.error('Error sending email:', error);
-  //   }
-  // };
-
   // Handle payment success or failure
   const handlePayment = async (status, orderDetails) => {
     console.log(showtime, selectedSeats, amount);
+    if (status === "succeeded") {
+      console.log(showtime.movieId._id)
+
+      window.location.href='/'
+    }
     await createPayment(status, orderDetails, showtime, selectedSeats, amount);
 
     const email = auth.currentUser?.email;
@@ -73,9 +72,6 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
       console.log(res);
     }
 
-    if (status === "succeeded") {
-      router.push('/');
-    }
   };
 
   // Options for Razorpay
@@ -89,7 +85,7 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
       console.log("Payment succeeded");
       console.log(response);
       paymentId.current = response.razorpay_payment_id;
-
+      // router.push('/');
       const succeeded =
         crypto
           .HmacSHA256(`${orderId}|${response.razorpay_payment_id}`, keySecret)

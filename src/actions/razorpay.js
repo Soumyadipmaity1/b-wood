@@ -57,7 +57,7 @@ export const sendEmail = async (email, paymentDetails) => {
 
     const mailOptions = {
         from: process.env.EMAIL_ID,
-        to: email[0],
+        to: email,
         subject: 'Payment Details',
         text: `Payment Status: ${paymentDetails.status} \n Order ID: ${paymentDetails.orderId} \n Payment ID: ${paymentDetails.paymentId} \n Showtime: ${paymentDetails.showtime} \n Selected Seats: ${paymentDetails.selectedSeats.join(", ")} \n Amount: ₹${paymentDetails.amount / 100}`,
     };

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPencil } from "react-icons/fa6";
+import { auth } from "../../firebase/firebase";
 
 export default function Profile() {
   const [user, setUser] = useState({
