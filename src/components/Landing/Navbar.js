@@ -119,9 +119,9 @@ const Navbar = () => {
                     </svg>
                   </button>
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-36 bg-white rounded-lg shadow-lg">
-                      <span className="text-white text-sm lg:text-lg">{username}</span>
-                      <hr className="my-2 w-full" />
+                    <div className="absolute right-0 mt-2 p-2 w-36 bg-white rounded-lg shadow-lg">
+                      <span className="text-black w-full flex items-center justify-center text-sm font-bold lg:text-lg">{username}</span>
+                      <hr className="my-2 w-full bg-black border-0 h-[1px]" />
                       <Link
                         href="/account"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
