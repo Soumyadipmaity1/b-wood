@@ -1,8 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPayment, sendEmail } from "../../actions/razorpay";
 import crypto from 'crypto-js';
 import { redirect, useRouter } from 'next/navigation';
-import { auth } from "../../firebase/firebase";
+import { auth, db } from "../../firebase/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 const loadScript = (src) =>
   new Promise((resolve) => {
@@ -39,25 +41,28 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
   const router = useRouter();
   const isMounted = useRef(true);
   const id=showtime.movieId._id
-
+  const [user,setUser]=useState('')
   useEffect(() => {
-    return () => {
-      isMounted.current = false;
-    };
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        // Fetch the username from Firestore
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userDoc = await getDoc(userDocRef);        
+        if (userDoc.exists()) {
+          setUser(userDoc.data().username);
+        }
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   // Handle payment success or failure
   const handlePayment = async (status, orderDetails) => {
     console.log(showtime, selectedSeats, amount);
-    if (status === "succeeded") {
-      console.log(showtime.movieId._id)
-
-      window.location.href='/'
-    }
-    await createPayment(status, orderDetails, showtime, selectedSeats, amount);
-
     const email = auth.currentUser?.email;
-
+    await createPayment(status, orderDetails, showtime, selectedSeats, amount,email);
     const paymentDetails = {
       status,
       orderId: orderDetails.orderId,
@@ -66,12 +71,14 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
       selectedSeats,
       amount,
     };
-
+    
     if (email) {
       const res = await sendEmail(email, paymentDetails);
       console.log(res);
+    }    
+    if (status === "succeeded") {
+      window.location.href='/'
     }
-
   };
 
   // Options for Razorpay
@@ -79,7 +86,7 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
     key: keyId,
     amount,
     currency: 'INR',
-    name: "amit",
+    name: user?user:'Amit',
     order_id: orderId,
     handler: (response) => {
       console.log("Payment succeeded");
@@ -122,7 +129,7 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
     retry: {
       enabled: false,
     },
-    timeout: 900,
+    timeout: 1200,
     theme: {
       color: "",
     },

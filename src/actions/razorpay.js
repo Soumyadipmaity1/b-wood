@@ -3,6 +3,7 @@ import Razorpay from 'razorpay'
 import Reservation from '../db/models/reservation.js'
 import Showtime from '../db/models/showtime'
 import nodemailer from 'nodemailer';
+import User from '../db/models/user.js';
 
 
 export const order = async (amount) => {
@@ -24,25 +25,58 @@ export const order = async (amount) => {
     }
 }
 
-export const createPayment = async (status, orderDetails, showtime, selectedSeats, amount) => {
-    try {
-        console.log("this is payment gateway")
-        const { _id } = showtime;
-        const reserve = new Reservation({
-            showtimeId: _id,
-            amount: amount,
-            orderId: orderDetails.orderId,
-        })
+export const createPayment = async (
+  status,
+  orderDetails,
+  showtime,
+  selectedSeats,
+  amount,
+  email
+) => {
+  try {
+    console.log("this is payment gateway");
+    console.log(email);
 
-        await reserve.save()
-        const res = await Showtime.findByIdAndUpdate(_id, {
-            $addToSet: { reserved_seats: { $each: selectedSeats } },
-        }, { new: true });
-        console.log("updated showtime ", res);
-    } catch (error) {
-        console.log(error)
+    const { _id } = showtime;
+
+    // Create a new reservation
+    const reserve = new Reservation({
+      showtimeId: _id,
+      amount: amount,
+      orderId: orderDetails.orderId,
+    });
+
+    // Save the reservation
+    const reser = await reserve.save();
+
+    // Update the showtime with reserved seats
+    await Showtime.findByIdAndUpdate(
+      _id,
+      {
+        $addToSet: { reserved_seats: { $each: selectedSeats } },
+      },
+      { new: true }
+    );
+
+    // Find user by email
+    const user = await User.findOne({ email });
+
+    if (user) {
+      // Initialize the reservation array if it doesn't exist
+      user.reservation = user.reservation || [];
+      // Add new reservation ID
+      user.reservation.push(reser._id);
+      // Save the user document
+      const res=await user.save();
+      console.log(res)
+    } else {
+      console.log(`User with email ${email} not found.`);
     }
-}
+  } catch (error) {
+    console.error("Error in createPayment:", error);
+  }
+};
+  
 
 
 export const sendEmail = async (email, paymentDetails) => {
