@@ -37,8 +37,8 @@ export const newMovie = async (data,cast) => {
 export const getMovies = async () => {
   await connectDB();
   try {
-    const movies = await Movie.find().lean();
-    return movies;
+    const movies = await Movie.find();
+    return {result:movies};
   } catch (error) {
     console.log(error);
     // throw error;

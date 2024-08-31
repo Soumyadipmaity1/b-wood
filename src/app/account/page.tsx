@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {auth}from '../../firebase/firebase.js'
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -9,7 +10,6 @@ export default function Profile() {
     username: "johndoe",
     email: "johndoe@example.com",
     phone: "+91641218492",
-    dateOfBirth: "1990-01-01",
     gender: "Male",
     tickets: [
       { id: 1, movie: "Inception", date: "2024-09-01", seat: "A1" },
@@ -17,6 +17,10 @@ export default function Profile() {
     ],
   });
 
+  useEffect(()=>{
+    const user=auth.currentUser
+    console.log(user)
+  },[])
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUser((prevState) => ({

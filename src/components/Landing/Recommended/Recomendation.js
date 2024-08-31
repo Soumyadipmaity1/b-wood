@@ -30,7 +30,7 @@ const Home = () => {
     const fetchMovies = async () => {
       try {
         const movies = await getMovies();
-        setMovies(movies);
+        setMovies(movies.result);
       } catch (error) {
         console.error("Error fetching movies:", error);
       }

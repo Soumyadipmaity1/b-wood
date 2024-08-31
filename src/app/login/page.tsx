@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { auth, db } from '../../firebase/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, query, collection, where, getDocs } from 'firebase/firestore';
 import bcrypt from 'bcryptjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -17,8 +17,11 @@ export default function Login() {
     e.preventDefault();
     try {
       // Fetch user document from Firestore
-      const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
-      if (userDoc.exists()) {
+      // const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
+      const q = query(collection(db, "users"), where("email", "==", email));
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot) {
+        const userDoc = querySnapshot.docs[0];
         const userData = userDoc.data();
         
         // Compare entered password with stored hashed password

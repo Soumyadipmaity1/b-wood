@@ -6,6 +6,7 @@ import { setDoc, doc } from 'firebase/firestore';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import bcrypt from 'bcryptjs';
+import {createUser} from '../../actions/user.js'
 
 export default function SignUp() {
   const [username, setUsername] = useState('');
@@ -31,7 +32,13 @@ export default function SignUp() {
         password: hashedPassword, // Store hashed password
         createdAt: new Date(),
       });      
-
+      const data={
+        username: username,
+        email: email,
+        password: hashedPassword,
+      }
+      const res=await createUser(data)
+      console.log(res)
       // Redirect or notify user on successful signup
       router.push('/login');
     } catch (err) {

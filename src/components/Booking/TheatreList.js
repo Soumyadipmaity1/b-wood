@@ -2,10 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { getShowtimeByTheaterAndMovieId, getTheaterByMovieId } from "../../actions/theater.js";
 import Link from "next/link";
-const theatre = [
-  { name: "Theatre 1", showtimes: ["8 am", "10 pm"] },
-  { name: "Theatre 2", showtimes: ["8 am", "10 pm"] },
-];
 
 const TheatreList = ({ location, id }) => {
   const [theaters, setTheaters] = useState([
