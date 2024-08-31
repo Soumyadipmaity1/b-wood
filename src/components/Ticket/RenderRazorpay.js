@@ -1,18 +1,19 @@
 import { useEffect, useRef } from "react";
-import { createPayment } from "../../actions/razorpay";
+import { createPayment, sendEmail } from "../../actions/razorpay";
 import crypto from 'crypto-js';
 import { useRouter } from 'next/navigation';
+import { auth } from "../../firebase/firebase";
 
 const loadScript = (src) =>
   new Promise((resolve) => {
     const script = document.createElement("script");
     script.src = src;
     script.onload = () => {
-      console.log("razorpay loaded successfully");
+      console.log("Razorpay loaded successfully");
       resolve(true);
     };
     script.onerror = () => {
-      console.log("error in loading razorpay");
+      console.log("Error in loading Razorpay");
       resolve(false);
     };
     document.body.appendChild(script);
@@ -30,36 +31,54 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
     };
   }, []);
 
-  const displayRazorpay = async (options) => {
-    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+  // Function to send the email with payment details
+  // const sendEmail = async (email, details) => {
+  //   try {
+  //     const response = await fetch('/api/sendEmail', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email, details }),
+  //     });
 
-    if (!res) {
-      console.log("Razorpay SDK failed to load. Are you online?");
-      return;
-    }
+  //     if (!response.ok) {
+  //       throw new Error('Failed to send email');
+  //     }
 
-    const rzp1 = new window.Razorpay(options);
+  //     console.log('Email sent successfully');
+  //   } catch (error) {
+  //     console.error('Error sending email:', error);
+  //   }
+  // };
 
-    rzp1.on("payment.submit", (response) => {
-      paymentMethod.current = response.method;
-    });
-
-    rzp1.on("payment.failed", (response) => {
-      paymentId.current = response.error.metadata.payment_id;
-    });
-
-    rzp1.open();
-  };
-
+  // Handle payment success or failure
   const handlePayment = async (status, orderDetails) => {
-    console.log(status, orderDetails);
+    console.log(showtime, selectedSeats, amount);
     await createPayment(status, orderDetails, showtime, selectedSeats, amount);
 
+    const email = auth.currentUser?.email;
+
+    const paymentDetails = {
+      status,
+      orderId: orderDetails.orderId,
+      paymentId: orderDetails.paymentId,
+      showtime,
+      selectedSeats,
+      amount,
+    };
+
+    if (email) {
+      const res = await sendEmail(email, paymentDetails);
+      console.log(res);
+    }
+
     if (status === "succeeded") {
-      router.push('/'); // Safe to navigate since the component is still mounted
+      router.push('/');
     }
   };
 
+  // Options for Razorpay
   const options = {
     key: keyId,
     amount,
@@ -67,7 +86,7 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
     name: "amit",
     order_id: orderId,
     handler: (response) => {
-      console.log("succeeded");
+      console.log("Payment succeeded");
       console.log(response);
       paymentId.current = response.razorpay_payment_id;
 
@@ -93,13 +112,13 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
       confirm_close: true,
       ondismiss: async (reason) => {
         if (reason === undefined) {
-          console.log("cancelled");
+          console.log("Payment cancelled");
           handlePayment("Cancelled");
         } else if (reason === "timeout") {
-          console.log("timedout");
+          console.log("Payment timed out");
           handlePayment("timedout");
         } else {
-          console.log("failed");
+          console.log("Payment failed");
           handlePayment("failed", reason.error);
         }
       },
@@ -114,9 +133,31 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
   };
 
   useEffect(() => {
-    console.log("in razorpay");
+    console.log("Initializing Razorpay");
     displayRazorpay(options);
   }, []);
+
+  // Function to display the Razorpay payment form
+  const displayRazorpay = async (options) => {
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+
+    if (!res) {
+      console.log("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    const rzp1 = new window.Razorpay(options);
+
+    rzp1.on("payment.submit", (response) => {
+      paymentMethod.current = response.method;
+    });
+
+    rzp1.on("payment.failed", (response) => {
+      paymentId.current = response.error.metadata.payment_id;
+    });
+
+    rzp1.open();
+  };
 
   return null;
 };
