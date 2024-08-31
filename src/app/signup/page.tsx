@@ -33,7 +33,7 @@ export default function SignUp() {
       });      
 
       // Redirect or notify user on successful signup
-      router.push('/login');
+      router.push('/');
     } catch (err) {
       setError(err.message);
     }
