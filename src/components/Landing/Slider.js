@@ -34,7 +34,7 @@ const Slider = () => {
   };
 
   return (
-    <div className="relative w-full xl:max-w-7xl lg:max-w-6xl mt-24 lg:mt-32 mx-auto">
+    <div className="relative w-full xl:max-w-7xl lg:max-w-6xl mt-28 lg:mt-32 mx-auto">
       <div className="relative h-full overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-30 lg:opacity-50 z-10"></div>
         <div

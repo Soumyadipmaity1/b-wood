@@ -1,10 +1,8 @@
-"use client"
 import { useEffect, useRef } from "react";
 import { createPayment } from "../../actions/razorpay";
 import crypto from 'crypto-js';
-import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation
+import { useRouter } from 'next/navigation';
 
-// Function to load script and append in DOM tree.
 const loadScript = (src) =>
   new Promise((resolve) => {
     const script = document.createElement("script");
@@ -23,44 +21,45 @@ const loadScript = (src) =>
 const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedSeats }) => {
   const paymentId = useRef(null);
   const paymentMethod = useRef(null);
-  const router = useRouter(); // Initialize the useRouter hook
-  console.log(showtime, selectedSeats);
+  const router = useRouter();
+  const isMounted = useRef(true);
 
-  // To load razorpay checkout modal script.
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   const displayRazorpay = async (options) => {
-    const res = await loadScript(
-      "https://checkout.razorpay.com/v1/checkout.js"
-    );
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
 
     if (!res) {
       console.log("Razorpay SDK failed to load. Are you online?");
       return;
     }
-    // All information is loaded in options which we will discuss later.
+
     const rzp1 = new window.Razorpay(options);
 
-    // If you want to retrieve the chosen payment method.
     rzp1.on("payment.submit", (response) => {
       paymentMethod.current = response.method;
     });
 
-    // To get payment id in case of failed transaction.
     rzp1.on("payment.failed", (response) => {
       paymentId.current = response.error.metadata.payment_id;
     });
 
-    // to open razorpay checkout modal.
     rzp1.open();
   };
 
-  // Informing server about payment
   const handlePayment = async (status, orderDetails) => {
     console.log(status, orderDetails);
-    const res = await createPayment(status, orderDetails, showtime, selectedSeats, amount);
-    // console.log(res)
+    await createPayment(status, orderDetails, showtime, selectedSeats, amount);
+
+    if (status === "succeeded") {
+      router.push('/'); // Safe to navigate since the component is still mounted
+    }
   };
 
-  // We will be filling this object in next step.
   const options = {
     key: keyId,
     amount,
@@ -72,20 +71,17 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
       console.log(response);
       paymentId.current = response.razorpay_payment_id;
 
-      // Most important step to capture and authorize the payment. This can be done on Backend server.
       const succeeded =
         crypto
           .HmacSHA256(`${orderId}|${response.razorpay_payment_id}`, keySecret)
           .toString() === response.razorpay_signature;
 
-      // If successfully authorized. Then we can consider the payment as successful.
       if (succeeded) {
         handlePayment("succeeded", {
           orderId,
-          paymentId,
+          paymentId: response.razorpay_payment_id,
           signature: response.razorpay_signature,
         });
-        router.push('/'); // Redirect to the home page
       } else {
         handlePayment("failed", {
           orderId,
@@ -94,48 +90,29 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
       }
     },
     modal: {
-      confirm_close: true, // This is set to true if we want confirmation when clicked on cross button.
-      // This function is executed when checkout modal is closed
-      // There can be 3 reasons when this modal is closed.
+      confirm_close: true,
       ondismiss: async (reason) => {
-        const {
-          reason: paymentReason,
-          field,
-          step,
-          code,
-        } = reason && reason.error ? reason.error : {};
-        // Reason 1 - When payment is cancelled. It can happen when we click cross icon or cancel any payment explicitly.
         if (reason === undefined) {
           console.log("cancelled");
           handlePayment("Cancelled");
-        }
-        // Reason 2 - When modal is auto-closed because of timeout
-        else if (reason === "timeout") {
+        } else if (reason === "timeout") {
           console.log("timedout");
           handlePayment("timedout");
-        }
-        // Reason 3 - When payment gets failed.
-        else {
+        } else {
           console.log("failed");
-          handlePayment("failed", {
-            paymentReason,
-            field,
-            step,
-            code,
-          });
+          handlePayment("failed", reason.error);
         }
       },
     },
-    // This property allows to enable/disable retries.
-    // This is enabled true by default.
     retry: {
       enabled: false,
     },
-    timeout: 900, // Time limit in Seconds
+    timeout: 900,
     theme: {
-      color: "", // Custom color for your checkout modal.
+      color: "",
     },
   };
+
   useEffect(() => {
     console.log("in razorpay");
     displayRazorpay(options);

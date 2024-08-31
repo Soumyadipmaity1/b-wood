@@ -8,6 +8,7 @@ export default function Profile() {
     name: "John Doe",
     username: "johndoe",
     email: "johndoe@example.com",
+    phone: "+91641218492",
     dateOfBirth: "1990-01-01",
     gender: "Male",
     tickets: [
@@ -90,14 +91,14 @@ export default function Profile() {
             />
           </div>
           <div className="mb-6 w-full">
-            <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="dateOfBirth">
-              Date of Birth
+            <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="email">
+              Mobile Number
             </label>
             <input
-              id="dateOfBirth"
-              name="dateOfBirth"
-              type="date"
-              value={user.dateOfBirth}
+              id="phone"
+              name="phone"
+              type="phone"
+              value={user.phone}
               onChange={handleInputChange}
               className="w-full p-3  bg-gray-800  rounded-lg shadow-sm   focus:ring-1 focus:ring-lime-300"
             />
@@ -133,7 +134,7 @@ export default function Profile() {
             </button>
           </div>
           <div className="w-full">
-            <h3 className="text-xl font-bold text-gray-700 mb-4">Tickets Booked</h3>
+            <h3 className="text-xl font-bold text-white mb-4">Tickets Booked</h3>
             {user.tickets.length > 0 ? (
               user.tickets.map((ticket) => (
                 <div key={ticket.id} className="border p-4 mb-4 rounded-lg shadow-sm bg-gray-800">

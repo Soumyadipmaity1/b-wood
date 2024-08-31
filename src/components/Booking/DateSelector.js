@@ -33,7 +33,7 @@ const DateSelector = () => {
             </button>
             <div ref={scrollRef} className="flex items-center justify-start overflow-hidden overflow-x-scroll gap-4 px-5 py-2 scrollbar-hidden">
                 {dates.map((date, index) => (
-                    <button key={index} className="bg-gray-800 text-neon font-bold border-2 border-neon px-6 py-2 rounded-lg hover:bg-black transition duration-200 ease-in-out">
+                    <button key={index} className="bg-gray-800 text-neon font-bold border-2 border-neon px-10 py-2 rounded-lg hover:bg-black transition duration-200 ease-in-out">
                         {date}
                     </button>
                 ))}
