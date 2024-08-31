@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { FaPencil } from "react-icons/fa6";
 
 export default function Profile() {
   const [user, setUser] = useState({
-    image: "", 
+    image: "",
     name: "John Doe",
     username: "johndoe",
     email: "johndoe@example.com",
@@ -46,8 +47,11 @@ export default function Profile() {
                 className="w-24 h-24 rounded-full border-4 border-purple-500"
               />
             ) : (
-              <div className="w-24 h-24 rounded-full border-4 border-lime-500 flex items-center justify-center bg-gray-200 text-gray-500 text-xl">
+              <div className="w-24 h-24 relative rounded-full border-4 border-lime-500 flex items-center justify-center bg-gray-200 text-gray-500 text-xl">
                 Add Image
+                <button className="absolute -bottom-1 -right-1 rounded-full p-1 text-black bg-neon flex items-center justify-center border-2 border-neon transition duration-150 ease-in-out hover:scale-110">
+                  <FaPencil className="size-4" />
+                </button>
               </div>
             )}
           </div>
