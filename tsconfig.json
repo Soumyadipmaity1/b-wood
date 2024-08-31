@@ -31,7 +31,7 @@
     "src/app/[id]/booking/[sid]/page.js",
     "src/app/[id]/booking/page.js",
     "src/app/[id]/page.js"
-  ],
+, "src/app/login/page.jsx", "src/app/signup/page.jsx", "src/app/account/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]

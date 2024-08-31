@@ -34,7 +34,8 @@ export const createUser = async (data) => {
         const user = new User(data);
         console.log(data);
         await user.save();
-        return user;
+        console.log(user)
+        return user.toObject();
     } catch (error) {
         console.error(error);
         throw new Error("Failed to create user");
@@ -68,3 +69,17 @@ export const deleteUser = async (id) => {
         throw new Error("Failed to delete user");
     }
 };
+
+export const getUserbyEmail=async(email)=>{
+    await connectDB();
+    try {
+        const user = await User.findOne({email}).lean();
+        if (!user) {
+            throw new Error("User not found");
+        }
+        return user;
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to fetch user by email");
+    }
+}

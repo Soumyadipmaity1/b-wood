@@ -21,10 +21,10 @@ export default function SignUp() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Hash the password before storing it
+      // // Hash the password before storing it
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Store user details in Firestore
+      // // Store user details in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         username: username,
@@ -33,9 +33,10 @@ export default function SignUp() {
         createdAt: new Date(),
       });      
       const data={
-        username: username,
+        name: username,
         email: email,
         password: hashedPassword,
+        role:'user'
       }
       const res=await createUser(data)
       console.log(res)

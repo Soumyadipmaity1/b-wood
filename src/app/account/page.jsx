@@ -3,24 +3,42 @@
 import { useEffect, useState } from "react";
 import { FaPencil } from "react-icons/fa6";
 import { auth } from "../../firebase/firebase";
+import { getUserbyEmail } from "../../actions/user";
 
 export default function Profile() {
   const [user, setUser] = useState({
-    image: "",
-    name: "John Doe",
-    username: "johndoe",
-    email: "johndoe@example.com",
-    phone: "+91641218492",
-    gender: "Male",
-    tickets: [
-      { id: 1, movie: "Inception", date: "2024-09-01", seat: "A1" },
-      { id: 2, movie: "Interstellar", date: "2024-09-15", seat: "B4" },
-    ],
+    name: "",
+    email: "",
+    phone: "",
+    tickets: [],
   });
 
   useEffect(()=>{
-    const user=auth.currentUser
-    console.log(user)
+    const fetchUserData=async(email)=>{
+      try {
+        const res= await getUserbyEmail(email)
+        console.log(res);
+        setUser({
+          name:res.name,
+          email:res.email,
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in
+        console.log(user.email); // Set the user email to state
+        fetchUserData(user.email);
+      } else {
+        // No user is signed in
+        console.log("No user is signed in.");
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   },[])
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -72,7 +90,7 @@ export default function Profile() {
               className="w-full p-3  bg-gray-800  rounded-lg shadow-sm   focus:ring-1 focus:ring-lime-300"
             />
           </div>
-          <div className="mb-6 w-full">
+          {/* <div className="mb-6 w-full">
             <label className="block text-gray-1 00 text-sm font-bold mb-2" htmlFor="username">
               Username
             </label>
@@ -84,7 +102,7 @@ export default function Profile() {
               onChange={handleInputChange}
               className="w-full p-3  bg-gray-800  rounded-lg shadow-sm   focus:ring-1 focus:ring-lime-300"
             />
-          </div>
+          </div> */}
           <div className="mb-6 w-full">
             <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="email">
               Email
@@ -111,7 +129,7 @@ export default function Profile() {
               className="w-full p-3  bg-gray-800  rounded-lg shadow-sm   focus:ring-1 focus:ring-lime-300"
             />
           </div>
-          <div className="mb-6 w-full">
+          {/* <div className="mb-6 w-full">
             <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="gender">
               Gender
             </label>
@@ -126,7 +144,7 @@ export default function Profile() {
               <option value="Female">Female</option>
               <option value="Other">Other</option>
             </select>
-          </div>
+          </div> */}
           <div className="flex justify-between w-full mb-8">
             <button
               onClick={handleUpdateProfile}
@@ -141,7 +159,7 @@ export default function Profile() {
               Delete Profile
             </button>
           </div>
-          <div className="w-full">
+          {/* <div className="w-full">
             <h3 className="text-xl font-bold text-white mb-4">Tickets Booked</h3>
             {user.tickets.length > 0 ? (
               user.tickets.map((ticket) => (
@@ -160,7 +178,7 @@ export default function Profile() {
             ) : (
               <p className="text-gray-500">No tickets booked yet.</p>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

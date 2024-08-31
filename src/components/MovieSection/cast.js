@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaFilm } from 'react-icons/fa';
+import { getCast } from "../../actions/movie";
 
-const Card = ({ name, role }) => {
+const Card = ({ name, character }) => {
   return (
     <div className="relative border-2 mx-5 w-60 cursor-pointer text-center border-white rounded-xl shadow-lg flex flex-col justify-center p-2 transition-transform duration-300 ease-in-out hover:bg-opacity-80">
       <div className="relative h-auto gap-16 w-full pt-6 flex flex-col items-center justify-between rounded-md mb-4 overflow-hidden">
         <FaFilm className="size-28 text-neon" />
         <div className="flex flex-col items-center justify-start">
           <p className="font-extrabold tracking-wider text-lg mb-2">{name}</p>
-          <p className="font-normal text-sm mb-2">{role}</p>
+          <p className="font-normal text-sm mb-2">{character}</p>
         </div>
       </div>
     </div>
@@ -28,7 +29,16 @@ const movieCast = [
   { name: "Actor 9", role: "Supporting" },
 ];
 
-const CastTable = () => {
+const CastTable = ({id}) => {
+  const [cast, setcast] = useState([{name:'',character:''}])
+  useEffect(()=>{
+    const fetchCast=async()=>{
+      const res=await getCast(id)
+      console.log(res.cast)
+      setcast(res.cast)
+    }
+    fetchCast();
+  },[])
   return (
     <div className="mb-20 p-2 lg:px-10">
       <div className="px-10 mt-10">
@@ -38,23 +48,23 @@ const CastTable = () => {
       <MarqueeWrapper>
         <Marquee>
           <MarqueeGroup>
-            {movieCast.concat(movieCast).map((cast, index) => (
+            {cast.concat(cast).map((cast, index) => (
               <Card
                 key={index}
                 name={cast.name}
-                role={cast.role}
+                role={cast.character}
               />
             ))}
           </MarqueeGroup>
-          <MarqueeGroup>
-            {movieCast.concat(movieCast).map((cast, index) => (
+          {/* <MarqueeGroup>
+            {cast.concat(cast).map((cast, index) => (
               <Card
                 key={index}
                 name={cast.name}
-                role={cast.role}
+                role={cast.character}
               />
             ))}
-          </MarqueeGroup>
+          </MarqueeGroup> */}
         </Marquee>
       </MarqueeWrapper>
     </div>
@@ -87,7 +97,7 @@ const scrollX = keyframes`
 const MarqueeGroup = styled.div`
   flex-shrink: 0;
   display: flex;
-  animation: ${scrollX} 140s linear infinite;
+  // animation: ${scrollX} 140s linear infinite;
   will-change: transform;
   min-width: 100%;
 `;

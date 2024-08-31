@@ -10,7 +10,7 @@ function Movies({ params }) {
   return (
     <div>
       <MovieSection id={id} />
-      <CastTable />
+      <CastTable id={id}/>
       <div className="p-2 lg:px-10">
         <h1 className="text-3xl text-neon font-bold mb-6">Recommended</h1>
         <Recommendation />
