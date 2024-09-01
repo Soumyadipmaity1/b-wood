@@ -4,6 +4,9 @@ import SeatSelection from "../../../../components/Ticket/SeatSelection";
 import { getShowTimeById } from "../../../../actions/theater";
 import { order } from "../../../../actions/razorpay.js";
 import RenderRazorpay from "../../../../components/Ticket/RenderRazorpay.js";
+import { useRouter } from "next/navigation";
+import { auth } from "../../../../firebase/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 function Ticket({ params }) {
   const { sid } = params;
@@ -17,6 +20,8 @@ function Ticket({ params }) {
   });
   const [displayRazorpay, setDisplayRazorpay] = useState(false);
   const [seatPrice, setSeatPrice] = useState(200); // Default seat price
+  const [user, setUser] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchShowtime = async () => {
@@ -36,8 +41,15 @@ function Ticket({ params }) {
     fetchShowtime();
   }, [sid]);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const handleSeatClick = (seat) => {
-    // Handle seat selection logic here
     if (showtime && showtime.reserved_seats.includes(seat)) return;
 
     if (selectedSeats.includes(seat)) {
@@ -48,6 +60,11 @@ function Ticket({ params }) {
   };
 
   const handleSubmit = async (amount) => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
     try {
       const res = await order(amount);
       if (res && res.id) {

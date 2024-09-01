@@ -86,13 +86,12 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedS
     key: keyId,
     amount,
     currency: 'INR',
-    name: user?user:'Amit',
+    name: username,
     order_id: orderId,
     handler: (response) => {
       console.log("Payment succeeded");
       console.log(response);
       paymentId.current = response.razorpay_payment_id;
-      // router.push('/');
       const succeeded =
         crypto
           .HmacSHA256(`${orderId}|${response.razorpay_payment_id}`, keySecret)
