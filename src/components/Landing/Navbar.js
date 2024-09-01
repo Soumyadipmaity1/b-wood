@@ -6,12 +6,14 @@ import { auth, db } from '../../firebase/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
+import { getUserbyEmail, getUserDetails } from '../../actions/user';
 
 const Navbar = () => {
   const [navbarBg, setNavbarBg] = useState('bg-transparent');
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
   const dropdownRef = useRef(null);
 
@@ -34,9 +36,16 @@ const Navbar = () => {
       if (currentUser) {
         // Fetch the username from Firestore
         const userDocRef = doc(db, 'users', currentUser.uid);
-        const userDoc = await getDoc(userDocRef);        
+        const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           setUsername(userDoc.data().username);
+          const userDetails=await getUserDetails(userDoc.data().email);
+          // console.log(userDetails)
+          if(userDetails.role==='admin'){
+            setIsAdmin(true);
+          }else{
+            setIsAdmin(false);
+          }
         }
       }
     });
@@ -128,6 +137,14 @@ const Navbar = () => {
                       >
                         Profile
                       </Link>
+                      {isAdmin && (
+                        <Link
+                          href="/admin"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Admin
+                        </Link>
+                      )}
                       <button
                         onClick={handleSignOut}
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

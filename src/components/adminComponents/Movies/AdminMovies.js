@@ -42,8 +42,8 @@ const AdminMovies = ({ onOpenSidebar }) => {
       try {
         const response = await getMovies();
         console.log(response)
-        if(response){
-            setMovies(response);
+        if(response.result){
+            setMovies(response.result);
         }
       } catch (error) {
         console.error("Error fetching movies:", error);

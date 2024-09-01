@@ -3,24 +3,26 @@
 import { useEffect, useState } from "react";
 import { FaPencil } from "react-icons/fa6";
 import { auth } from "../../firebase/firebase";
-import { getUserbyEmail } from "../../actions/user";
+import { deleteUserByEmail, getUserbyEmail, updateUserByEmail } from "../../actions/user";
 
 export default function Profile() {
   const [user, setUser] = useState({
     name: "",
     email: "",
     phone: "",
-    tickets: [],
   });
-
+  const [reservation,setReservation] = useState([]);
   useEffect(()=>{
     const fetchUserData=async(email)=>{
       try {
         const res= await getUserbyEmail(email)
         console.log(res);
+        const {reservation}=res
+        setReservation(reservation)
         setUser({
           name:res.name,
           email:res.email,
+          phone:res.phone||""
         })
       } catch (error) {
         console.log(error)
@@ -48,12 +50,22 @@ export default function Profile() {
     }));
   };
 
-  const handleUpdateProfile = () => {
-    alert("Profile updated successfully!");
+  const handleUpdateProfile =async () => {
+    try {
+      alert("Profile updated successfully!");
+      const res=await updateUserByEmail(user.email,user.phone)
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleDeleteProfile = () => {
-    alert("Profile deleted successfully!");
+  const handleDeleteProfile =async () => {
+    try {
+      const res=await deleteUserByEmail(user.email);
+      alert("Profile deleted successfully!");
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
@@ -88,21 +100,9 @@ export default function Profile() {
               value={user.name}
               onChange={handleInputChange}
               className="w-full p-3  bg-gray-800  rounded-lg shadow-sm   focus:ring-1 focus:ring-lime-300"
+              disabled={true}
             />
           </div>
-          {/* <div className="mb-6 w-full">
-            <label className="block text-gray-1 00 text-sm font-bold mb-2" htmlFor="username">
-              Username
-            </label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              value={user.username}
-              onChange={handleInputChange}
-              className="w-full p-3  bg-gray-800  rounded-lg shadow-sm   focus:ring-1 focus:ring-lime-300"
-            />
-          </div> */}
           <div className="mb-6 w-full">
             <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="email">
               Email
@@ -114,6 +114,7 @@ export default function Profile() {
               value={user.email}
               onChange={handleInputChange}
               className="w-full p-3  bg-gray-800  rounded-lg shadow-sm   focus:ring-1 focus:ring-lime-300"
+              disabled={true}
             />
           </div>
           <div className="mb-6 w-full">
@@ -129,22 +130,6 @@ export default function Profile() {
               className="w-full p-3  bg-gray-800  rounded-lg shadow-sm   focus:ring-1 focus:ring-lime-300"
             />
           </div>
-          {/* <div className="mb-6 w-full">
-            <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="gender">
-              Gender
-            </label>
-            <select
-              id="gender"
-              name="gender"
-              value={user.gender}
-              onChange={handleInputChange}
-              className="w-full p-3  bg-gray-800  rounded-lg shadow-sm   focus:ring-1 focus:ring-lime-300"
-            >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-          </div> */}
           <div className="flex justify-between w-full mb-8">
             <button
               onClick={handleUpdateProfile}
@@ -152,33 +137,36 @@ export default function Profile() {
             >
               Update Profile
             </button>
-            <button
+            {/* <button
               onClick={handleDeleteProfile}
               className="bg-orange-500 text-black py-2 px-6 rounded-lg shadow-lg hover:bg-orange-600 transition-colors"
             >
               Delete Profile
-            </button>
+            </button> */}
           </div>
-          {/* <div className="w-full">
+          <div className="w-full">
             <h3 className="text-xl font-bold text-white mb-4">Tickets Booked</h3>
-            {user.tickets.length > 0 ? (
-              user.tickets.map((ticket) => (
-                <div key={ticket.id} className="border p-4 mb-4 rounded-lg shadow-sm bg-gray-800">
+            {reservation.length > 0 ? (
+              reservation.map((reserve) => (
+                <div key={reserve.id} className="border p-4 mb-4 rounded-lg shadow-sm bg-gray-800">
                   <p>
-                    <strong>Movie:</strong> {ticket.movie}
+                    <strong>Movie:</strong> {reserve.showtimeId.movieId.title}
                   </p>
                   <p>
-                    <strong>Date:</strong> {ticket.date}
+                    <strong>Start At:</strong> {reserve.showtimeId.startAt}
                   </p>
                   <p>
-                    <strong>Seat:</strong> {ticket.seat}
+                    <strong>Amount:</strong> {(Number(reserve.amount))/100}
+                  </p>
+                  <p>
+                    <strong>Seat:</strong> {reserve.showtimeId.reserved_seats.join(', ')}
                   </p>
                 </div>
               ))
             ) : (
               <p className="text-gray-500">No tickets booked yet.</p>
             )}
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

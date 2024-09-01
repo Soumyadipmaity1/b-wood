@@ -22,13 +22,13 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
     const fetchMovies = async () => {
       const movies = await getAllMovieIds();
       setMoviesList(movies);
-      console.log("Movies fetched:", movies);
+      // console.log("Movies fetched:", movies);
       // console.log("this is mode and ",mode,theatreId);
     };
     const fetchData = async () => {
       if(theaterId){
         const res=await getTheaterById(theaterId);
-        console.log("theater",res)
+        // console.log("theater",res)
         if(res){
           setTheatre({
             name:res.name,
@@ -39,7 +39,7 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
           setExistingMovieIds(res.movieId || []);
         }
         const showres=await getShowtimeBytheaterId(theaterId);
-        console.log(showres)
+        // console.log(showres)
         if(showres){
           setShowtimes(showres.map(show=>({
             ...show,
@@ -60,7 +60,7 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
       }
     };
     fetchMovies();
-    console.log(mode,theaterId)
+    // console.log(mode,theaterId)
     if(theaterId){
       fetchData();
     }
@@ -132,10 +132,10 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
       data.append('city',theatre.city)
       data.append('movieId',JSON.stringify(theatre.movieIds));
       const newTheater=await createTheater(data);
-      console.log(newTheater);
+      // console.log(newTheater);
       const{_id}=newTheater
       const showTimes=await createShowtime(showtimes,_id)
-      console.log(showTimes)
+      // console.log(showTimes)
     }
   }
 
@@ -149,14 +149,14 @@ const TheatresSidebar = ({ isOpen, onClose, mode,theaterId }) => {
       data.append('name',theatre.name)
       data.append('city',theatre.city)
       data.append('movieId',JSON.stringify(theatre.movieIds));
-      console.log(theatre.movieIds)
+      // console.log(theatre.movieIds)
       
       const res=await updateTheaterById(theaterId,data);
-      console.log(res)
+      // console.log(res)
       const newShowtimes=showtimes.filter(show=>show.isNew);
       const oldShowtimes=showtimes.filter(show=>!show.isNew);
-      console.log(newShowtimes)
-      console.log(oldShowtimes);
+      // console.log(newShowtimes)
+      // console.log(oldShowtimes);
       if(newShowtimes.length>0){
         const res=await createShowtime(newShowtimes,theaterId);
         console.log(res);

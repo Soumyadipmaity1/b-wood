@@ -4,6 +4,31 @@ import SeatSelection from "../../../../components/Ticket/SeatSelection";
 import { getShowTimeById } from "../../../../actions/theater";
 import { order } from "../../../../actions/razorpay.js";
 import RenderRazorpay from "../../../../components/Ticket/RenderRazorpay.js";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
+const TicketLoader = () => (
+  <div className="flex items-center justify-center h-screen bg-black">
+    <div className="text-center p-6 w-full lg:w-2/3 text-neon border-[1px] border-white rounded-md">
+      <h1 className="text-white text-3xl font-bold pb-4">
+        <Skeleton width={300} height={30} />
+      </h1>
+      <p className="text-white mb-4">
+        <Skeleton width={500} height={20} />
+      </p>
+      <div className="flex items-center justify-between mb-4">
+        <Skeleton width={200} height={20} />
+        <Skeleton width={100} height={20} />
+      </div>
+      <div className="mb-6">
+        <Skeleton width={300} height={200} />
+      </div>
+      <div className="flex justify-center">
+        <Skeleton width={200} height={50} />
+      </div>
+    </div>
+  </div>
+);
 import { useRouter } from "next/navigation";
 import { auth } from "../../../../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -19,6 +44,7 @@ function Ticket({ params }) {
     amount: null,
   });
   const [displayRazorpay, setDisplayRazorpay] = useState(false);
+  const [seatPrice, setSeatPrice] = useState(200);
   const [seatPrice, setSeatPrice] = useState(200); // Default seat price
   const [user, setUser] = useState(null);
   const router = useRouter();
@@ -82,7 +108,7 @@ function Ticket({ params }) {
   const totalAmount = selectedSeats.length * seatPrice;
 
   if (loading) {
-    return <div>Loading...</div>; // Handle loading state here
+    return <TicketLoader />;
   }
 
   return (

@@ -18,7 +18,6 @@ function Booking({params}) {
                 if(res){
                     setMovieName(res.title);
                 }
-                console.log(res)
             } catch (error) {
                 console.log(error);
             }

@@ -6,7 +6,6 @@ import CastTable from "../../components/MovieSection/cast";
 import Recommendation from '../../components/Landing/Recommended/Recomendation';
 function Movies({ params }) {
   const { id } = params;
-  console.log(id);
   return (
     <div>
       <MovieSection id={id} />
