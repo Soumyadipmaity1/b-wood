@@ -6,7 +6,7 @@ import { getDoc, doc, query, collection, where, getDocs } from 'firebase/firesto
 import bcrypt from 'bcryptjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getUserbyEmail } from '../../actions/user';
+import { getUserbyEmail, getUserDetails } from '../../actions/user';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -19,8 +19,7 @@ export default function Login() {
     try {
       // Fetch user document from Firestore
       // const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
-      const res=await getUserbyEmail(email)
-      console.log(res);
+      const res=await getUserDetails(email)
       if (res) {
         // Compare entered password with stored hashed password
         const passwordMatch = await bcrypt.compare(password, res.password);

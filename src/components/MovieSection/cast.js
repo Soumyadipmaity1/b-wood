@@ -16,25 +16,11 @@ const Card = ({ name, character }) => {
     </div>
   );
 };
-
-const movieCast = [
-  { name: "Actor 1", role: "Lead" },
-  { name: "Actor 2", role: "Supporting" },
-  { name: "Actor 3", role: "Supporting" },
-  { name: "Actor 4", role: "Supporting" },
-  { name: "Actor 5", role: "Supporting" },
-  { name: "Actor 6", role: "Supporting" },
-  { name: "Actor 7", role: "Supporting" },
-  { name: "Actor 8", role: "Supporting" },
-  { name: "Actor 9", role: "Supporting" },
-];
-
 const CastTable = ({id}) => {
   const [cast, setcast] = useState([{name:'',character:''}])
   useEffect(()=>{
     const fetchCast=async()=>{
       const res=await getCast(id)
-      console.log(res.cast)
       setcast(res.cast)
     }
     fetchCast();

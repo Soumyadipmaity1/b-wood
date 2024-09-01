@@ -72,6 +72,21 @@ export const deleteUser = async (id) => {
     }
 };
 
+
+
+export const getUserDetails=async(email)=>{
+    await connectDB();
+    try {
+        const user = await User.findOne({ email }).lean();
+        if (!user) {
+            throw new Error("User not found");
+        }
+        return user;
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to fetch user by email");
+    }
+}
 export const getUserbyEmail=async(email)=>{
     await connectDB();
     try {

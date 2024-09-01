@@ -39,7 +39,6 @@ export default function SignUp() {
         role:'user'
       }
       const res=await createUser(data)
-      console.log(res)
       // Redirect or notify user on successful signup
       router.push('/');
     } catch (err) {
