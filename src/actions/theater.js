@@ -117,7 +117,6 @@ export const getShowTimeById=async (id)=>{
   await connectDB();
   try {
     const res=await Showtime.findById(id).populate('movieId').populate('theaterId').lean();
-
     return res;
   } catch (error) {
     console.log(error);

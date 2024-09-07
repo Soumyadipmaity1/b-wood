@@ -1,85 +1,107 @@
-"use client"
-import { useEffect, useRef } from "react";
-import { createPayment } from "../../actions/razorpay";
-import crypto from 'crypto-js'
+import { useEffect, useRef, useState } from "react";
+import { createPayment, sendEmail } from "../../actions/razorpay";
+import crypto from 'crypto-js';
+import { redirect, useRouter } from 'next/navigation';
+import { auth, db } from "../../firebase/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
-// Function to load script and append in DOM tree.
 const loadScript = (src) =>
   new Promise((resolve) => {
     const script = document.createElement("script");
     script.src = src;
     script.onload = () => {
-      console.log("razorpay loaded successfully");
+      console.log("Razorpay loaded successfully");
       resolve(true);
+      // Remove the script element from the DOM after it loads.
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
     };
     script.onerror = () => {
-      console.log("error in loading razorpay");
+      console.log("Error in loading Razorpay");
       resolve(false);
+      // Remove the script element from the DOM if an error occurs.
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
     };
-    document.body.appendChild(script);
+    // Only append the script if document.body is not null
+    if (document.body) {
+      document.body.appendChild(script);
+    } else {
+      console.error("document.body is null. Cannot append Razorpay script.");
+      resolve(false);
+    }
   });
 
-const RenderRazorpay = ({ orderId, keyId, keySecret, amount,showtime,selectedSeats}) => {
+const RenderRazorpay = ({ orderId, keyId, keySecret, amount, showtime, selectedSeats }) => {
   const paymentId = useRef(null);
   const paymentMethod = useRef(null);
-  console.log(showtime,selectedSeats)
-  // To load razorpay checkout modal script.
-  const displayRazorpay = async (options) => {
-    const res = await loadScript(
-      "https://checkout.razorpay.com/v1/checkout.js"
-    );
-
-    if (!res) {
-      console.log("Razorpay SDK failed to load. Are you online?");
-      return;
-    }
-    // All information is loaded in options which we will discuss later.
-    const rzp1 = new window.Razorpay(options);
-
-    // If you want to retreive the chosen payment method.
-    rzp1.on("payment.submit", (response) => {
-      paymentMethod.current = response.method;
+  const router = useRouter();
+  const isMounted = useRef(true);
+  const id=showtime.movieId._id
+  const [user,setUser]=useState('')
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        // Fetch the username from Firestore
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userDoc = await getDoc(userDocRef);        
+        if (userDoc.exists()) {
+          setUser(userDoc.data().username);
+        }
+      }
     });
 
-    // To get payment id in case of failed transaction.
-    rzp1.on("payment.failed", (response) => {
-      paymentId.current = response.error.metadata.payment_id;
-    });
+    return () => unsubscribe();
+  }, []);
 
-    // to open razorpay checkout modal.
-    rzp1.open();
-  };
-
-  // informing server about payment
+  // Handle payment success or failure
   const handlePayment = async (status, orderDetails) => {
-    console.log(status, orderDetails)
-    const res=await createPayment(status,orderDetails,showtime,selectedSeats,amount)
-    // console.log(res)
+    console.log(showtime, selectedSeats, amount);
+    const email = auth.currentUser?.email;
+    await createPayment(status, orderDetails, showtime, selectedSeats, amount,email);
+    const paymentDetails = {
+      status,
+      orderId: orderDetails.orderId,
+      paymentId: orderDetails.paymentId,
+      showtime,
+      selectedSeats,
+      amount,
+    };
+    
+    if (email) {
+      const res = await sendEmail(email, paymentDetails);
+      console.log(res);
+    }    
+    if (status === "succeeded") {
+      window.location.href='/'
+    }
   };
 
-  // we will be filling this object in next step.
+  // Options for Razorpay
   const options = {
     key: keyId,
     amount,
-    currency:'INR',
-    name: "amit",
+    currency: 'INR',
+    name: user?user:'Amit',
     order_id: orderId,
     handler: (response) => {
-      console.log("succeeded");
+      console.log("Payment succeeded");
       console.log(response);
       paymentId.current = response.razorpay_payment_id;
-
-      // Most important step to capture and authorize the payment. This can be done of Backend server.
+      // router.push('/');
       const succeeded =
         crypto
           .HmacSHA256(`${orderId}|${response.razorpay_payment_id}`, keySecret)
           .toString() === response.razorpay_signature;
 
-      // If successfully authorized. Then we can consider the payment as successful.
       if (succeeded) {
         handlePayment("succeeded", {
           orderId,
-          paymentId,
+          paymentId: response.razorpay_payment_id,
           signature: response.razorpay_signature,
         });
       } else {
@@ -90,52 +112,55 @@ const RenderRazorpay = ({ orderId, keyId, keySecret, amount,showtime,selectedSea
       }
     },
     modal: {
-      confirm_close: true, // this is set to true, if we want confirmation when clicked on cross button.
-      // This function is executed when checkout modal is closed
-      // There can be 3 reasons when this modal is closed.
+      confirm_close: true,
       ondismiss: async (reason) => {
-        const {
-          reason: paymentReason,
-          field,
-          step,
-          code,
-        } = reason && reason.error ? reason.error : {};
-        // Reason 1 - when payment is cancelled. It can happend when we click cross icon or cancel any payment explicitly.
         if (reason === undefined) {
-          console.log("cancelled");
+          console.log("Payment cancelled");
           handlePayment("Cancelled");
-        }
-        // Reason 2 - When modal is auto closed because of time out
-        else if (reason === "timeout") {
-          console.log("timedout");
+        } else if (reason === "timeout") {
+          console.log("Payment timed out");
           handlePayment("timedout");
-        }
-        // Reason 3 - When payment gets failed.
-        else {
-          console.log("failed");
-          handlePayment("failed", {
-            paymentReason,
-            field,
-            step,
-            code,
-          });
+        } else {
+          console.log("Payment failed");
+          handlePayment("failed", reason.error);
         }
       },
     },
-    // This property allows to enble/disable retries.
-    // This is enabled true by default.
     retry: {
       enabled: false,
     },
-    timeout: 900, // Time limit in Seconds
+    timeout: 1200,
     theme: {
-      color: "", // Custom color for your checkout modal.
+      color: "",
     },
   };
+
   useEffect(() => {
-    console.log("in razorpay");
+    console.log("Initializing Razorpay");
     displayRazorpay(options);
   }, []);
+
+  // Function to display the Razorpay payment form
+  const displayRazorpay = async (options) => {
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+
+    if (!res) {
+      console.log("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    const rzp1 = new window.Razorpay(options);
+
+    rzp1.on("payment.submit", (response) => {
+      paymentMethod.current = response.method;
+    });
+
+    rzp1.on("payment.failed", (response) => {
+      paymentId.current = response.error.metadata.payment_id;
+    });
+
+    rzp1.open();
+  };
 
   return null;
 };

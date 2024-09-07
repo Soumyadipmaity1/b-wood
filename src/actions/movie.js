@@ -37,8 +37,8 @@ export const newMovie = async (data,cast) => {
 export const getMovies = async () => {
   await connectDB();
   try {
-    const movies = await Movie.find().lean();
-    return movies;
+    const movies = await Movie.find();
+    return {result:movies};
   } catch (error) {
     console.log(error);
     // throw error;
@@ -72,21 +72,6 @@ export const getCastById = async (data) => {
 export const updateMoviebyId = async (id,data,cast) => {
   await connectDB()
   try {
-    // const castIds = await Promise.all(cast.map(async (item) => {
-    //   // const existCast=await Cast.findById(item);
-    //   // if(existCast){
-    //   //   return existCast._id;
-    //   // }
-    //   const newCast = new Cast({
-    //     name: item.name,
-    //     character: item.character,
-    //     image: item.image,
-    //   });
-    //   const res = await newCast.save();
-    //   return res._id;
-    // }));
-      // console.log(data);
-      // console.log(cast);
     const updatedMovie={
       title:data.get('title'),
       images:data.get('images'),
@@ -102,6 +87,7 @@ export const updateMoviebyId = async (id,data,cast) => {
     return movie;
   } catch (error) {
     console.error(error);
+    return ''
   }
 };
 
@@ -121,9 +107,21 @@ export const getAllMovieIds=async()=>{
   try {
     const movies = await Movie.find({}, '_id title'); // Retrieve both _id and title fields
     const movieData = movies.map(movie => ({ id: movie._id, title: movie.title })); // Map to an array of objects with id and title
-    console.log(movieData);
+    // console.log(movieData);
     return movieData;
   } catch (error) {
     console.log(error);
+  }
+}
+
+
+export const getCast=async(id)=>{
+  await connectDB()
+  try {
+    const res=await Movie.findById(id).populate('cast').lean();
+    return res
+  } catch (error) {
+    console.log(error);
+    return []
   }
 }

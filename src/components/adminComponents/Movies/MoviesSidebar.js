@@ -295,16 +295,6 @@ const MoviesSidebar = ({ isOpen, onClose, mode , movieId}) => {
                 className="p-1 pl-3 w-full rounded-md text-black focus:ring-2 focus:ring-neon"
               />
 
-              <div className="flex items-center justify-center text-neon">
-                <p>Image: </p>
-                <input
-                  type="file"
-                  name="image"
-                  onChange={(e) => handleCastChange(index, e)}
-                  className="p-1 pl-3 w-full rounded-md text-black"
-                />
-              </div>
-
               {cast.length > 1 && (
                 <button
                   type="button"

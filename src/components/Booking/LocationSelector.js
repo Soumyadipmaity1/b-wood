@@ -6,23 +6,25 @@ const LocationSelector = ({ onSelectLocation }) => {
     const [inputValue, setInputValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [locationSelected, setLocationSelected] = useState(false);
     const inputRef = useRef(null);
-    const containerRef = useRef(null); // Reference to the container element
+    const containerRef = useRef(null);
 
     useEffect(() => {
-        // Fetch user's current location by default
-        navigator.geolocation.getCurrentPosition(async (position) => {
-            const { latitude, longitude } = position.coords;
-            try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
-                const data = await response.json();
-                const location = data.display_name;
-                setInputValue(location);
-                onSelectLocation(location);
-            } catch (error) {
-                console.error("Error fetching current location:", error);
-            }
-        });
+        if (!locationSelected) { // Only fetch the live location if no location is selected
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const { latitude, longitude } = position.coords;
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
+                    const data = await response.json();
+                    const city = data.address?.city || data.address?.town || data.address?.village || data.address?.hamlet || ''; // Extract city name
+                    setInputValue(city);
+                    onSelectLocation(city);
+                } catch (error) {
+                    console.error("Error fetching current location:", error);
+                }
+            });
+        }
 
         // Event listener for detecting clicks outside the dropdown
         const handleClickOutside = (event) => {
@@ -37,7 +39,7 @@ const LocationSelector = ({ onSelectLocation }) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [onSelectLocation]);
+    }, [onSelectLocation, locationSelected]); // Include locationSelected in the dependency array
 
     useEffect(() => {
         if (inputValue.length > 2) {
@@ -51,9 +53,14 @@ const LocationSelector = ({ onSelectLocation }) => {
         try {
             const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=5`);
             const data = await response.json();
-            const locations = data.map(item => item.display_name);
+            const locations = data
+                .map(item => {
+                    const city = item.address?.city || item.address?.town || item.address?.village || item.address?.hamlet || ''; // Extract city name
+                    return city;
+                })
+                .filter(city => city); // Remove empty strings
             setSuggestions(locations);
-            setShowSuggestions(true);
+            setShowSuggestions(locations.length > 0);
         } catch (error) {
             console.error("Error fetching location suggestions:", error);
         }
@@ -61,11 +68,13 @@ const LocationSelector = ({ onSelectLocation }) => {
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
+        setLocationSelected(false); // Reset selection state on manual input
     };
 
     const handleSuggestionClick = (location) => {
         setInputValue(location);
         setShowSuggestions(false);
+        setLocationSelected(true); // Mark that a location has been selected
         onSelectLocation(location);
         inputRef.current.blur();
     };

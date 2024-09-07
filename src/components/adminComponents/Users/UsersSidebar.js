@@ -54,14 +54,14 @@ const UsersSidebar = ({ isOpen, onClose, mode, userId }) => {
     if (mode === "add") {
       try {
         const newUser = await createUser(user);
-        console.log("User created:", newUser);
+        // console.log("User created:", newUser);
         onClose();
       } catch (error) {
         console.error("Failed to create user:", error);
       }
     } else {
       const updatedUser = await updateUser(userId, user);
-      console.log(updatedUser);
+      // console.log(updatedUser);
     }
   };
 

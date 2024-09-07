@@ -25,7 +25,7 @@ const OfferCard = () => {
             )}
 
             <div className='hidden lg:block px-10 rounded-md w-1/3'>
-                <div className="bg-neon text-black text-center w-full h-full">
+                <div className="text-black text-center w-full h-full flex items-center justify-center">
                     <img src='/offer.jpg' alt='Offer Card' className='w-full h-full' />
                 </div>
             </div>
